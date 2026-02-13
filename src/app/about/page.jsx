@@ -1,6 +1,7 @@
 "use client";
 import React from 'react';
 import dynamic from "next/dynamic" 
+import FadeIn from "@/components/fade-in"
 import { Calendar, Trophy, Users, MapPin, Clock, MessageCircle } from 'lucide-react';
 
 const AnimatedBackground = dynamic(() => import("@/components/animted-bg"), {
@@ -16,49 +17,69 @@ const AboutSection = () => {
     <AnimatedBackground />
   </div>
       <div className="relative z-10 max-w-6xl mx-auto">
-
+       <FadeIn direction="up" duration={0.8}>
+        <h1 className="text-5xl md:text-6xl font-bold mb-12 text-center bg-gradient-to-r from-[#218c63] to-[#82a18a] bg-clip-text text-transparent">
+          The MythX: An Endgame Protocol
+        </h1>
+       </FadeIn>
         <div className="mb-16">
+          <FadeIn direction="up" delay={0.2}>
           <h2 className="text-4xl md:text-5xl font-bold mb-6 text-center bg-gradient-to-r from-[#218c63] to-[#82a18a] bg-clip-text text-transparent">
             About The MythX
           </h2>
+          </FadeIn>
+          <FadeIn direction="up" delay={0.3}>
           <p className="text-lg text-gray-300 leading-relaxed mb-4">
             <span className="text-[#218c63] font-semibold">The MythX: An Endgame Protocol</span> is a high-intensity, 
             national-level cybersecurity Capture The Flag (CTF) competition designed to test real-world technical 
             skills in offensive and defensive security.
           </p>
+          </FadeIn>
+          <FadeIn direction="up" delay={0.4}>
           <p className="text-lg text-gray-300 leading-relaxed mb-4">
             Participants will tackle challenging, practical cybersecurity problems that simulate real cyber incidents, 
             adversary techniques, and modern attack-defense scenarios. The event emphasizes hands-on learning, strategic 
             thinking, teamwork, and innovation in ethical hacking.
           </p>
+          </FadeIn>
+          <FadeIn direction="up" delay={0.5}>
           <p className="text-lg text-gray-300 leading-relaxed">
             This is a two-round Jeopardy-style CTF, progressing from an online qualifier to an immersive onsite grand 
             finale at KIET Ghaziabad — culminating in an expert speaker session and prize distribution ceremony.
           </p>
+          </FadeIn>
 
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+             <FadeIn direction="up" delay={0.6}>
             <div className="bg-[#0e2b1d]/50 backdrop-blur-sm border border-[#218c63]/30 rounded-lg p-6 text-center hover:border-[#218c63] transition-colors">
               <Users className="w-8 h-8 text-[#218c63] mx-auto mb-2" />
               <h3 className="text-xl font-semibold mb-1">Team Size</h3>
               <p className="text-gray-400">1 - 4 Members</p>
             </div>
+            </FadeIn>
+             <FadeIn direction="up" delay={0.7}>
             <div className="bg-[#0e2b1d]/50 backdrop-blur-sm border border-[#218c63]/30 rounded-lg p-6 text-center hover:border-[#218c63] transition-colors">
               <MapPin className="w-8 h-8 text-[#218c63] mx-auto mb-2" />
               <h3 className="text-xl font-semibold mb-1">Venue</h3>
               <p className="text-gray-400">KIET, Ghaziabad</p>
             </div>
+            </FadeIn>
+             <FadeIn direction="up" delay={0.8}>
             <div className="bg-[#0e2b1d]/50 backdrop-blur-sm border border-[#218c63]/30 rounded-lg p-6 text-center hover:border-[#218c63] transition-colors">
               <Trophy className="w-8 h-8 text-[#218c63] mx-auto mb-2" />
               <h3 className="text-xl font-semibold mb-1">Prize Pool</h3>
               <p className="text-gray-400">₹30,000 + Goodies</p>
             </div>
+            </FadeIn>
           </div>
         </div>
 
 
         <div className="mb-16">
+          <FadeIn direction="up">
           <h3 className="text-3xl md:text-4xl font-bold mb-12 text-center">Event Timeline</h3>
+          </FadeIn>
           <div className="relative">
 
             <div className="absolute left-8 md:left-1/2 transform md:-translate-x-1/2 h-full w-1 bg-gradient-to-b from-[#218c63] via-[#20553c] to-[#82a18a]"></div>
@@ -70,11 +91,14 @@ const AboutSection = () => {
                 <div className="absolute left-[-32px] md:left-auto md:right-[-20px] w-10 h-10 bg-[#218c63] rounded-full flex items-center justify-center border-4 border-[#050906]">
                   <Calendar className="w-5 h-5 text-white" />
                 </div>
+                <FadeIn direction="left">
                 <div className="bg-[#0e2b1d]/70 backdrop-blur-sm border border-[#218c63]/30 rounded-lg p-6 w-full hover:border-[#218c63] transition-colors">
                   <h4 className="text-xl font-bold text-[#218c63] mb-2">Registration Deadline</h4>
                   <p className="text-gray-300 mb-1">17 February 2026, 5:00 PM IST</p>
                   <p className="text-sm text-gray-400">Last chance to register your team</p>
+                  
                 </div>
+                </FadeIn>
               </div>
 
 
@@ -82,50 +106,61 @@ const AboutSection = () => {
                 <div className="absolute left-[-32px] md:left-[-20px] w-10 h-10 bg-[#20553c] rounded-full flex items-center justify-center border-4 border-[#050906]">
                   <Clock className="w-5 h-5 text-white" />
                 </div>
+                <FadeIn direction="right">
                 <div className="bg-[#0e2b1d]/70 backdrop-blur-sm border border-[#20553c]/30 rounded-lg p-6 w-full hover:border-[#20553c] transition-colors">
                   <h4 className="text-xl font-bold text-[#82a18a] mb-2">Round 1 — Online Qualifier</h4>
                   <p className="text-gray-300 mb-1">17 February 2026</p>
                   <p className="text-gray-300 mb-1">6:00 PM – 12:00 AM (6 hours)</p>
                   <p className="text-sm text-gray-400">Jeopardy-style CTF • Top 30 teams advance</p>
                 </div>
+                </FadeIn>
               </div>
 
               <div className="relative flex items-start md:justify-end md:w-1/2 md:pr-12 ml-16 md:ml-0">
                 <div className="absolute left-[-32px] md:left-auto md:right-[-20px] w-10 h-10 bg-[#218c63] rounded-full flex items-center justify-center border-4 border-[#050906]">
                   <Trophy className="w-5 h-5 text-white" />
                 </div>
+                <FadeIn direction="left">
                 <div className="bg-[#0e2b1d]/70 backdrop-blur-sm border border-[#218c63]/30 rounded-lg p-6 w-full hover:border-[#218c63] transition-colors">
                   <h4 className="text-xl font-bold text-[#218c63] mb-2">Round 2 — Onsite Grand Finale</h4>
                   <p className="text-gray-300 mb-1">23-24 February 2026</p>
                   <p className="text-gray-300 mb-1">8:00 PM (23rd) – 12:00 PM (24th) • 16 hours</p>
                   <p className="text-sm text-gray-400">CRPC Hall, KIET Ghaziabad • Overnight CTF Battle</p>
                 </div>
+                </FadeIn>
               </div>
 
               <div className="relative flex items-start md:justify-start md:w-1/2 md:pl-12 md:ml-auto ml-16">
                 <div className="absolute left-[-32px] md:left-[-20px] w-10 h-10 bg-[#82a18a] rounded-full flex items-center justify-center border-4 border-[#050906]">
                   <Users className="w-5 h-5 text-white" />
                 </div>
+                
+                <FadeIn direction="right">
                 <div className="bg-[#0e2b1d]/70 backdrop-blur-sm border border-[#82a18a]/30 rounded-lg p-6 w-full hover:border-[#82a18a] transition-colors">
                   <h4 className="text-xl font-bold text-[#82a18a] mb-2">Speaker Session & Prize Ceremony</h4>
                   <p className="text-gray-300 mb-1">24 February 2026</p>
                   <p className="text-gray-300 mb-1">1:30 PM – 4:00 PM</p>
                   <p className="text-sm text-gray-400">Expert insights & Winner recognition</p>
                 </div>
+                </FadeIn>
               </div>
             </div>
           </div>
         </div>
 
         <div className="mb-12">
+          <FadeIn direction="up">
           <h3 className="text-3xl md:text-4xl font-bold mb-10 text-center">Prize Pool</h3>
+          </FadeIn>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
 
             <div className="relative bg-gradient-to-br from-[#218c63]/20 to-[#20553c]/10 border-2 border-[#218c63] rounded-lg p-8 text-center transform hover:scale-105 transition-transform">
+            
               <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-[#218c63] text-white font-bold px-6 py-2 rounded-full text-lg shadow-lg">
                 🥇 1st Place
               </div>
+              <FadeIn direction="up" delay={0.1}>
               <div className="mt-6">
                 <p className="text-4xl font-bold text-[#218c63] mb-4">₹15,000</p>
                 <ul className="text-gray-300 space-y-2">
@@ -134,13 +169,16 @@ const AboutSection = () => {
                   <li>+ Certificate</li>
                 </ul>
               </div>
+              </FadeIn>
             </div>
 
  
             <div className="relative bg-gradient-to-br from-[#20553c]/20 to-[#0e2b1d]/10 border-2 border-[#20553c] rounded-lg p-8 text-center transform hover:scale-105 transition-transform">
+           
               <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-[#20553c] text-white font-bold px-6 py-2 rounded-full text-lg shadow-lg">
                 🥈 2nd Place
               </div>
+              <FadeIn direction="up" delay={0.2}>
               <div className="mt-6">
                 <p className="text-4xl font-bold text-[#82a18a] mb-4">₹10,000</p>
                 <ul className="text-gray-300 space-y-2">
@@ -149,13 +187,16 @@ const AboutSection = () => {
                   <li>+ Certificate</li>
                 </ul>
               </div>
+              </FadeIn>
             </div>
 
 
             <div className="relative bg-gradient-to-br from-[#82a18a]/20 to-[#20553c]/10 border-2 border-[#82a18a] rounded-lg p-8 text-center transform hover:scale-105 transition-transform">
+           
               <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-[#82a18a] text-[#050906] font-bold px-6 py-2 rounded-full text-lg shadow-lg">
                 🥉 3rd Place
               </div>
+              <FadeIn direction="up" delay={0.3}>
               <div className="mt-6">
                 <p className="text-4xl font-bold text-[#82a18a] mb-4">₹5,000</p>
                 <ul className="text-gray-300 space-y-2">
@@ -164,7 +205,9 @@ const AboutSection = () => {
                   <li>+ Certificate</li>
                 </ul>
               </div>
+              </FadeIn>
             </div>
+        
           </div>
 
 
