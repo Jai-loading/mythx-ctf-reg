@@ -1,6 +1,16 @@
-import mongoose, { Schema, models, model } from "mongoose";
+import mongoose, { Schema, models, model, Document } from "mongoose";
 
-const formDataSchema = new Schema(
+export interface IUser extends Document {
+  name: string;
+  email: string;
+  phone: string;
+  college: string;
+  branch?: string;
+  rollno?: string;
+  othercollege?: string;
+}
+
+const formDataSchema = new Schema<IUser>(
   {
     name: {
       type: String,
@@ -11,7 +21,7 @@ const formDataSchema = new Schema(
     email: {
       type: String,
       required: true,
-      unique: true,  
+      unique: true,
       lowercase: true,
       trim: true,
     },
@@ -22,14 +32,14 @@ const formDataSchema = new Schema(
     },
     college: {
       type: String,
+      required: true,
       trim: true,
     },
     branch: {
       type: String,
-      required: true,
       trim: true,
     },
-    transactionid: {
+    rollno: {
       type: String,
       trim: true,
     },
@@ -41,6 +51,6 @@ const formDataSchema = new Schema(
   { timestamps: true }
 );
 
-const User = models.User || model("User", formDataSchema);
+const User = models.User || model<IUser>("User", formDataSchema);
 
 export default User;

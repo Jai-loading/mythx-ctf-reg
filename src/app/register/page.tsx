@@ -23,7 +23,7 @@ const initialFormData = {
   phone: "",
   college: "KIET Group of Institutions",
   branch: "",
-  transactionid: "",
+  rollno: "",
   othercollege: "",
 };
 
@@ -33,6 +33,8 @@ export default function Register() {
   const [isLoading, setIsLoading] = useState(false);
   const [statusMessage, setStatusMessage] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [collegeOption, setCollegeOption] = useState<"kiet" | "other">("kiet");
+  const [whatsappChecked, setWhatsappChecked] = useState(false);
+  const [discordChecked, setDiscordChecked] = useState(false);
 
   const router = useRouter();
 
@@ -73,8 +75,18 @@ export default function Register() {
     if (!formData.college)
       errors.push("Please select college");
 
-    if (!formData.branch)
-      errors.push("Branch is required");
+    if (collegeOption === "kiet") {
+      if (!formData.branch)
+        errors.push("Branch is required");
+      if (!formData.rollno)
+        errors.push("Roll number is required");
+    }
+
+    if (!whatsappChecked)
+      errors.push("Please confirm WhatsApp group joining");
+
+    if (!discordChecked)
+      errors.push("Please confirm Discord group joining");
 
     if (errors.length > 0) {
       const errorMsg = errors.join(", ");
@@ -91,6 +103,8 @@ export default function Register() {
       setStatusMessage({ type: "success", message: response.data.message });
 
       setFormData(initialFormData);
+      setWhatsappChecked(false);
+      setDiscordChecked(false);
 
       setTimeout(() => {
         router.push("/");
@@ -129,14 +143,13 @@ export default function Register() {
         <AnimatedBackground />
       </div>
 
-      {/* Decorative elements */}
       <div className="fixed top-20 left-10 w-72 h-72 bg-[#218c63]/10 rounded-full blur-3xl z-10"></div>
       <div className="fixed bottom-20 right-10 w-96 h-96 bg-[#20553c]/10 rounded-full blur-3xl z-10"></div>
 
       <div className="max-w-3xl mx-auto px-4 pt-20 pb-12 relative z-20">
 
         <FadeIn>
-          {/* Header with glowing effect */}
+       
           <div className="text-center mb-12">
             <div className="inline-block relative">
               <h1 className="text-5xl md:text-6xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-[#218c63] via-[#82a18a] to-[#218c63] animate-gradient tracking-wider">
@@ -155,21 +168,18 @@ export default function Register() {
         </FadeIn>
 
         <FadeIn delay={0.2}>
-          {/* Enhanced form container with multiple border effects */}
+          
           <div className="relative group">
-            {/* Outer glow */}
+           
             <div className="absolute -inset-0.5 bg-gradient-to-r from-[#218c63] via-[#20553c] to-[#218c63] rounded-2xl opacity-20 group-hover:opacity-40 blur transition duration-300"></div>
-            
-            {/* Form card */}
+   
             <form
               onSubmit={handleSubmit}
               className="relative bg-gradient-to-br from-[#0e2b1d]/90 via-[#050906]/90 to-[#0e2b1d]/90 backdrop-blur-xl border-2 border-[#20553c]/50 rounded-2xl shadow-2xl shadow-[#218c63]/20 p-8 md:p-12 space-y-8"
             >
-              {/* Decorative corner accents */}
               <div className="absolute top-0 left-0 w-20 h-20 border-t-4 border-l-4 border-[#218c63] rounded-tl-2xl"></div>
               <div className="absolute bottom-0 right-0 w-20 h-20 border-b-4 border-r-4 border-[#218c63] rounded-br-2xl"></div>
 
-              {/* Full Name Field */}
               <div className="relative group/input">
                 <label className="block mb-3 text-sm font-semibold text-[#82a18a] tracking-wider uppercase">
                   Full Name
@@ -193,7 +203,6 @@ export default function Register() {
                 </div>
               </div>
 
-              {/* Email Field */}
               <div className="relative group/input">
                 <label className="block mb-3 text-sm font-semibold text-[#82a18a] tracking-wider uppercase">
                   Email Address
@@ -217,7 +226,6 @@ export default function Register() {
                 </div>
               </div>
 
-              {/* Phone Field */}
               <div className="relative group/input">
                 <label className="block mb-3 text-sm font-semibold text-[#82a18a] tracking-wider uppercase">
                   Phone Number
@@ -245,13 +253,12 @@ export default function Register() {
                 </div>
               </div>
 
-              {/* College Field */}
+            
               <div className="relative">
                 <label className="block mb-3 text-sm font-semibold text-[#82a18a] tracking-wider uppercase">
                   College / Institution
                 </label>
-                
-                {/* Radio buttons with enhanced styling */}
+              
                 <div className="flex gap-6 mb-4">
                   <label className="relative flex items-center gap-3 cursor-pointer group">
                     <input
@@ -277,7 +284,7 @@ export default function Register() {
                       checked={collegeOption === "other"}
                       onChange={() => {
                         setCollegeOption("other");
-                        setFormData(prev => ({ ...prev, college: "" }));
+                        setFormData(prev => ({ ...prev, college: "", branch: "" }));
                       }}
                       className="appearance-none w-5 h-5 border-2 border-[#20553c] rounded-full checked:border-[#218c63] checked:border-4 transition-all duration-200 cursor-pointer"
                     />
@@ -292,7 +299,7 @@ export default function Register() {
                     <input
                       type="text"
                       name="college"
-                      placeholder="Enter your college name"
+                      placeholder="Enter your Organization name"
                       value={formData.college}
                       onChange={handleInputChange}
                       required
@@ -308,7 +315,35 @@ export default function Register() {
                 )}
               </div>
 
-              {/* Branch Field */}
+          
+              
+
+              {/* Roll Number Field - Only for KIET students */}
+              {collegeOption === "kiet" && (
+                <div className="relative group/input">
+                  <label className="block mb-3 text-sm font-semibold text-[#82a18a] tracking-wider uppercase">
+                    Roll Number
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      name="rollno"
+                      placeholder="Enter your roll number"
+                      value={formData.rollno}
+                      onChange={handleInputChange}
+                      required
+                      disabled={isLoading}
+                      className="bg-[#050906]/80 border-2 border-[#20553c]/50 focus:border-[#218c63] text-white rounded-xl block w-full p-4 pl-12 transition-all duration-300 placeholder:text-gray-600 focus:ring-2 focus:ring-[#218c63]/30 focus:outline-none"
+                    />
+                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#218c63]">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <div className="relative group/input">
                 <label className="block mb-3 text-sm font-semibold text-[#82a18a] tracking-wider uppercase">
                   Branch / Department
@@ -317,12 +352,12 @@ export default function Register() {
                   <input
                     type="text"
                     name="branch"
-                    placeholder="e.g., Computer Science, IT, ECE"
+                    placeholder={collegeOption === "other" ? "Not required for other colleges" : "e.g., Computer Science, IT, ECE"}
                     value={formData.branch}
                     onChange={handleInputChange}
-                    required
-                    disabled={isLoading}
-                    className="bg-[#050906]/80 border-2 border-[#20553c]/50 focus:border-[#218c63] text-white rounded-xl block w-full p-4 pl-12 transition-all duration-300 placeholder:text-gray-600 focus:ring-2 focus:ring-[#218c63]/30 focus:outline-none"
+                    required={collegeOption === "kiet"}
+                    disabled={isLoading || collegeOption === "other"}
+                    className="bg-[#050906]/80 border-2 border-[#20553c]/50 focus:border-[#218c63] text-white rounded-xl block w-full p-4 pl-12 transition-all duration-300 placeholder:text-gray-600 focus:ring-2 focus:ring-[#218c63]/30 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                   />
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#218c63]">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -332,7 +367,69 @@ export default function Register() {
                 </div>
               </div>
 
-              {/* Status Message */}
+              {/* WhatsApp and Discord Group Checkboxes */}
+              <div className="relative space-y-4 pt-4">
+                <label className="block mb-3 text-sm font-semibold text-[#82a18a] tracking-wider uppercase">
+                  Join Community Groups
+                </label>
+
+                <div className="space-y-3">
+                  <label className="flex items-start gap-3 cursor-pointer group p-4 rounded-xl border-2 border-[#20553c]/50 hover:border-[#218c63]/50 transition-all duration-300 bg-[#050906]/40">
+                    <input
+                      type="checkbox"
+                      checked={whatsappChecked}
+                      onChange={(e) => setWhatsappChecked(e.target.checked)}
+                      className="mt-1 appearance-none w-5 h-5 border-2 border-[#20553c] rounded checked:bg-[#218c63] checked:border-[#218c63] transition-all duration-200 cursor-pointer"
+                    />
+                    <div className="flex-1">
+                      <span className="text-white font-medium group-hover:text-[#218c63] transition-colors block">
+                        Join WhatsApp Group (Mandatory)
+                      </span>
+                      <a 
+                        href="https://chat.whatsapp.com/YOUR_WHATSAPP_GROUP_LINK" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-sm text-[#82a18a] hover:text-[#218c63] underline transition-colors mt-1 inline-block"
+                      >
+                        Click here to join WhatsApp group →
+                      </a>
+                    </div>
+                  </label>
+
+                  <label className="flex items-start gap-3 cursor-pointer group p-4 rounded-xl border-2 border-[#20553c]/50 hover:border-[#218c63]/50 transition-all duration-300 bg-[#050906]/40">
+                    <input
+                      type="checkbox"
+                      checked={discordChecked}
+                      onChange={(e) => setDiscordChecked(e.target.checked)}
+                      className="mt-1 appearance-none w-5 h-5 border-2 border-[#20553c] rounded checked:bg-[#218c63] checked:border-[#218c63] transition-all duration-200 cursor-pointer"
+                    />
+                    <div className="flex-1">
+                      <span className="text-white font-medium group-hover:text-[#218c63] transition-colors block">
+                        Join Discord Server (Mandatory)
+                      </span>
+                      <a 
+                        href="https://discord.gg/EXq267jVA" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-sm text-[#82a18a] hover:text-[#218c63] underline transition-colors mt-1 inline-block"
+                      >
+                        Click here to join Discord server →
+                      </a>
+                    </div>
+                  </label>
+                </div>
+
+                {(!whatsappChecked || !discordChecked) && (
+                  <p className="text-sm text-amber-400/80 mt-2 flex items-center gap-2">
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    </svg>
+                    You must join both groups to complete registration
+                  </p>
+                )}
+              </div>
+
+            
               {statusMessage && (
                 <div className={`p-5 rounded-xl text-center font-medium border-2 ${
                   statusMessage.type === "success"
@@ -343,19 +440,19 @@ export default function Register() {
                 </div>
               )}
 
-              {/* Submit Button */}
+           
               <div className="text-center pt-4">
                 <button
                   type="submit"
-                  disabled={isLoading}
+                  disabled={isLoading || !whatsappChecked || !discordChecked}
                   className={`relative group/button w-full md:w-auto border-2 border-[#218c63] text-white font-black text-lg py-4 px-16 rounded-xl transition-all duration-300 tracking-widest overflow-hidden
-                  ${isLoading
+                  ${isLoading || !whatsappChecked || !discordChecked
                       ? 'bg-[#20553c] cursor-not-allowed opacity-70'
                       : 'bg-gradient-to-r from-[#218c63] to-[#20553c] hover:from-[#20553c] hover:to-[#218c63] hover:scale-105 hover:shadow-2xl hover:shadow-[#218c63]/50'
                     }`}
                 >
-                  {/* Button shine effect */}
-                  {!isLoading && (
+                  
+                  {!isLoading && whatsappChecked && discordChecked && (
                     <div className="absolute inset-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12 -translate-x-full group-hover/button:translate-x-[200%] transition-transform duration-700"></div>
                   )}
                   
@@ -377,7 +474,7 @@ export default function Register() {
                 </button>
               </div>
 
-              {/* Info text */}
+              
               <p className="text-center text-sm text-gray-500 mt-6">
                 By registering, you agree to participate in The MythX CTF Challenge
               </p>
@@ -386,7 +483,7 @@ export default function Register() {
           </div>
         </FadeIn>
 
-        {/* Back to home link */}
+       
         <div className="text-center mt-12">
           <Link 
             href="/" 
@@ -431,6 +528,10 @@ export default function Register() {
 
         .animate-fadeIn {
           animation: fadeIn 0.5s ease-out;
+        }
+
+        input[type="checkbox"]:checked {
+          background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
         }
       `}</style>
     </main>

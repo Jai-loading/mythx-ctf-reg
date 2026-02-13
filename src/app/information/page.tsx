@@ -60,7 +60,9 @@ const About: React.FC = () => {
     return (
         <main className="relative min-h-screen bg-gradient-to-b from-[#050906] to-[#0e2b1d] text-white flex items-center justify-center overflow-hidden">
 
-            <AnimatedBackground />
+            <div className="fixed inset-0 z-10">
+        <AnimatedBackground />
+      </div>
 
             <div className="relative z-10 max-w-4xl w-full px-6 py-20">
 

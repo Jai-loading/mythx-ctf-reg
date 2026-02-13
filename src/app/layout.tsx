@@ -24,12 +24,12 @@ export default function RootLayout({
 }>) {
 
     console.log(
-      "%c What are you doing here ?! you sneaky developer ",
+      "%c 🕵️‍♂️ Access Denied! Who let this sneaky dev in here?!",
       "color:#05fff2"
     );
-    console.log("Check out my Github �� https://github.com/ShreeveshKumar");
+    console.log("Check out my Github �� https://github.com/Nileshstack");
 
-  
+ 
   return (
     <html lang="en">
       <head>

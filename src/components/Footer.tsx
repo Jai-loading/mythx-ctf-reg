@@ -134,7 +134,7 @@ export default function Footer() {
               <nav className="grid grid-cols-1 gap-4">
                 <Link href="https://www.technocrats.tech/" target="_blank" className="text-[#82a18a] hover:text-[#218c63] transition-colors">Official Site</Link>
                 <Link href="https://x.com/technocrats_?lang=en" target="_blank" className="text-[#82a18a] hover:text-[#218c63] transition-colors">Twitter</Link>
-                <Link href="https://www.instagram.com/technocrats.kiet/" target="_blank" className="text-[#82a18a] hover:text-[#218c63] transition-colors">Instagram</Link>
+                <Link href="https://discord.gg/EXq267jVA" target="_blank" className="text-[#82a18a] hover:text-[#218c63] transition-colors">Discord</Link>
                 <Link href="https://www.linkedin.com/company/technocrats-kiet/posts/?feedView=all" target="_blank" className="text-[#82a18a] hover:text-[#218c63] transition-colors">LinkedIn</Link>
               </nav>
             </div>

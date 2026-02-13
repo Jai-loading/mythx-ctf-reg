@@ -36,12 +36,7 @@ export default function Home() {
    const gradientColor = "rgba(33, 140, 99";
   const gradientOpacity = 0.4;
 
-    console.log(
-      "%c 🕵️‍♂️ Access Denied! Who let this sneaky dev in here?!",
-      "color:#05fff2"
-    );
-    console.log("Check out my Github �� https://github.com/Nileshstack");
-
+   
 
   return (
        <main className="poppins relative min-h-screen text-white bg-gradient-to-b from-[#050906] to-[#0e2b1d] overflow-hidden">
@@ -218,7 +213,7 @@ export default function Home() {
          <div id="about" className="py-16 mb-3 border-t border-[#20553c]/40">
           <FadeIn>
             <h2 className="text-4xl mb-10 font-extrabold text-center mt-10 bg-gradient-to-r from-[#218c63] to-[#82a18a] bg-clip-text text-transparent">
-              About The MythX CFT
+              About The MythX CTF
             </h2>
           </FadeIn>
 
@@ -227,7 +222,7 @@ export default function Home() {
 
               <FadeIn direction="left" delay={0.1}>
                 <p className="text-lg text-[#82a18a] leading-relaxed">
-                  The MythX CFT – The Endgame Protocol is an immersive Capture The Flag (CTF) cybersecurity bootcamp designed to test your technical skills and logical thinking.
+                  The MythX CTF – The Endgame Protocol is an immersive Capture The Flag (CTF) cybersecurity bootcamp designed to test your technical skills and logical thinking.
                 </p>
               </FadeIn>
 
@@ -294,7 +289,7 @@ export default function Home() {
                 Limited Slots. High Stakes.
               </h2>
               <p className="text-lg mt-3 text-[#82a18a] leading-relaxed">
-                The MythX CFT is not just a competition — it's a cybersecurity battleground where the sharpest minds rise to the top.
+                The MythX CTF is not just a competition — it's a cybersecurity battleground where the sharpest minds rise to the top.
               </p>
             </FadeIn>
 

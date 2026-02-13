@@ -22,21 +22,21 @@ const AboutSection = () => {
           The MythX: An Endgame Protocol
         </h1>
        </FadeIn>
-        <div className="mb-16">
+        <div className="mb-20">
           <FadeIn direction="up" delay={0.2}>
           <h2 className="text-4xl md:text-5xl font-bold mb-6 text-center bg-gradient-to-r from-[#218c63] to-[#82a18a] bg-clip-text text-transparent">
             About The MythX
           </h2>
           </FadeIn>
           <FadeIn direction="up" delay={0.3}>
-          <p className="text-lg text-gray-300 leading-relaxed mb-4">
+          <p className="text-lg text-gray-300 leading-relaxed mb-6">
             <span className="text-[#218c63] font-semibold">The MythX: An Endgame Protocol</span> is a high-intensity, 
             national-level cybersecurity Capture The Flag (CTF) competition designed to test real-world technical 
             skills in offensive and defensive security.
           </p>
           </FadeIn>
           <FadeIn direction="up" delay={0.4}>
-          <p className="text-lg text-gray-300 leading-relaxed mb-4">
+          <p className="text-lg text-gray-300 leading-relaxed mb-6">
             Participants will tackle challenging, practical cybersecurity problems that simulate real cyber incidents, 
             adversary techniques, and modern attack-defense scenarios. The event emphasizes hands-on learning, strategic 
             thinking, teamwork, and innovation in ethical hacking.
@@ -227,7 +227,8 @@ const AboutSection = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
 
             <a
-              href="#"
+              href="https://discord.com/invite/EXq267jVA"
+              target="_blank"
               className="group relative inline-flex items-center gap-3 bg-[#218c63] hover:bg-[#20553c] text-white font-semibold px-8 py-4 rounded-lg transition-all transform hover:scale-105 shadow-lg hover:shadow-[#218c63]/50 w-full sm:w-auto justify-center"
             >
               <MessageCircle className="w-6 h-6" />
