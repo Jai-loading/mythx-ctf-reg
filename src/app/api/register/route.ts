@@ -34,8 +34,12 @@ export async function POST(req: NextRequest) {
     // 2. Duplicate Check using DynamoDB (Primary efficient check)
     const exists = await checkUserExists(body.email);
     if (exists) {
-      await logRegistrationAttempt(body.email, "DUPLICATE_ATTEMPT", { ip: req.ip });
+      const forwarded = req.headers.get("x-forwarded-for");
+      const ip = forwarded ? forwarded.split(',')[0] : "unknown";
+
+      await logRegistrationAttempt(body.email, "DUPLICATE_ATTEMPT", { ip });
       return NextResponse.json(
+
         { message: "This email is already registered." },
         { status: 409 }
       );
