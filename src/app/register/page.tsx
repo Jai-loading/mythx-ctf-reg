@@ -25,7 +25,9 @@ const initialFormData = {
   branch: "",
   rollno: "",
   othercollege: "",
+  documentKey: "",
 };
+
 
 export default function Register() {
 
@@ -38,8 +40,11 @@ export default function Register() {
 
   const router = useRouter();
 
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+
   useEffect(() => {
-    console.log("%c What are you doing here ?! you sneaky developer ", "color:#05fff2");
+    console.log("%c MythX Protection System Active", "color:#05fff2");
   }, []);
 
   const validateEmail = (email: string) =>
@@ -96,13 +101,42 @@ export default function Register() {
       return;
     }
 
-    try {
-      const response = await axios.post("/api/register", formData);
+    // --- S3 File Upload Logic ---
+    let finalFormData = { ...formData };
 
-      toast.success("Registration successful! You are in 🚀");
+    if (selectedFile) {
+      setIsUploading(true);
+      try {
+        // 1. Get Pre-signed URL
+        const { data: uploadInfo } = await axios.post("/api/upload-url", {
+          fileName: selectedFile.name,
+          fileType: selectedFile.type,
+        });
+
+        // 2. Upload directly to S3
+        await axios.put(uploadInfo.uploadUrl, selectedFile, {
+          headers: { "Content-Type": selectedFile.type },
+        });
+
+        finalFormData.documentKey = uploadInfo.key;
+      } catch (err) {
+        toast.error("File upload failed. Please try again.");
+        setIsLoading(false);
+        setIsUploading(false);
+        return;
+      } finally {
+        setIsUploading(false);
+      }
+    }
+
+    try {
+      const response = await axios.post("/api/register", finalFormData);
+
+      toast.success("Registration successful! Data secured in S3 🚀");
       setStatusMessage({ type: "success", message: response.data.message });
 
       setFormData(initialFormData);
+      setSelectedFile(null);
       setWhatsappChecked(false);
       setDiscordChecked(false);
 
@@ -129,7 +163,7 @@ export default function Register() {
         <title>Register | The MythX CTF</title>
       </Head>
 
-      <ToastContainer 
+      <ToastContainer
         position="top-right"
         theme="dark"
         toastStyle={{
@@ -149,7 +183,7 @@ export default function Register() {
       <div className="max-w-3xl mx-auto px-4 pt-20 pb-12 relative z-20">
 
         <FadeIn>
-       
+
           <div className="text-center mb-12">
             <div className="inline-block relative">
               <h1 className="text-5xl md:text-6xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-[#218c63] via-[#82a18a] to-[#218c63] animate-gradient tracking-wider">
@@ -168,11 +202,11 @@ export default function Register() {
         </FadeIn>
 
         <FadeIn delay={0.2}>
-          
+
           <div className="relative group">
-           
+
             <div className="absolute -inset-0.5 bg-gradient-to-r from-[#218c63] via-[#20553c] to-[#218c63] rounded-2xl opacity-20 group-hover:opacity-40 blur transition duration-300"></div>
-   
+
             <form
               onSubmit={handleSubmit}
               className="relative bg-gradient-to-br from-[#0e2b1d]/90 via-[#050906]/90 to-[#0e2b1d]/90 backdrop-blur-xl border-2 border-[#20553c]/50 rounded-2xl shadow-2xl shadow-[#218c63]/20 p-8 md:p-12 space-y-8"
@@ -253,12 +287,12 @@ export default function Register() {
                 </div>
               </div>
 
-            
+
               <div className="relative">
                 <label className="block mb-3 text-sm font-semibold text-[#82a18a] tracking-wider uppercase">
                   College / Institution
                 </label>
-              
+
                 <div className="flex gap-6 mb-4">
                   <label className="relative flex items-center gap-3 cursor-pointer group">
                     <input
@@ -315,8 +349,8 @@ export default function Register() {
                 )}
               </div>
 
-          
-              
+
+
 
               {/* Roll Number Field - Only for KIET students */}
               {collegeOption === "kiet" && (
@@ -367,7 +401,36 @@ export default function Register() {
                 </div>
               </div>
 
+              <div className="relative group/input">
+                <label className="block mb-3 text-sm font-semibold text-[#82a18a] tracking-wider uppercase">
+                  Verify Student ID / Document (Optional)
+                </label>
+                <div className="relative">
+                  <input
+                    type="file"
+                    accept=".jpg,.jpeg,.png,.pdf"
+                    onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
+                    disabled={isLoading}
+                    className="hidden"
+                    id="file-upload"
+                  />
+                  <label
+                    htmlFor="file-upload"
+                    className="flex flex-col items-center justify-center bg-[#050906]/80 border-2 border-dashed border-[#20553c]/50 hover:border-[#218c63] text-white rounded-xl p-6 cursor-pointer transition-all duration-300"
+                  >
+                    <svg className={`w-8 h-8 mb-2 ${selectedFile ? 'text-[#218c63]' : 'text-gray-500'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                    <span className="text-sm font-medium">
+                      {selectedFile ? selectedFile.name : "Click to upload (JPG, PNG, PDF)"}
+                    </span>
+                    {selectedFile && <span className="text-xs text-[#218c63] mt-1">File selected</span>}
+                  </label>
+                </div>
+              </div>
+
               {/* WhatsApp and Discord Group Checkboxes */}
+
               <div className="relative space-y-4 pt-4">
                 <label className="block mb-3 text-sm font-semibold text-[#82a18a] tracking-wider uppercase">
                   Join Community Groups
@@ -385,9 +448,9 @@ export default function Register() {
                       <span className="text-white font-medium group-hover:text-[#218c63] transition-colors block">
                         Join WhatsApp Group (Mandatory)
                       </span>
-                      <a 
-                        href="https://chat.whatsapp.com/YOUR_WHATSAPP_GROUP_LINK" 
-                        target="_blank" 
+                      <a
+                        href="https://chat.whatsapp.com/YOUR_WHATSAPP_GROUP_LINK"
+                        target="_blank"
                         rel="noopener noreferrer"
                         className="text-sm text-[#82a18a] hover:text-[#218c63] underline transition-colors mt-1 inline-block"
                       >
@@ -407,9 +470,9 @@ export default function Register() {
                       <span className="text-white font-medium group-hover:text-[#218c63] transition-colors block">
                         Join Discord Server (Mandatory)
                       </span>
-                      <a 
-                        href="https://discord.gg/EXq267jVA" 
-                        target="_blank" 
+                      <a
+                        href="https://discord.gg/EXq267jVA"
+                        target="_blank"
                         rel="noopener noreferrer"
                         className="text-sm text-[#82a18a] hover:text-[#218c63] underline transition-colors mt-1 inline-block"
                       >
@@ -429,18 +492,17 @@ export default function Register() {
                 )}
               </div>
 
-            
+
               {statusMessage && (
-                <div className={`p-5 rounded-xl text-center font-medium border-2 ${
-                  statusMessage.type === "success"
-                    ? "bg-gradient-to-r from-green-900/50 to-emerald-900/50 text-green-300 border-green-500/50"
-                    : "bg-gradient-to-r from-red-900/50 to-rose-900/50 text-red-300 border-red-500/50"
-                } backdrop-blur-sm animate-fadeIn`}>
+                <div className={`p-5 rounded-xl text-center font-medium border-2 ${statusMessage.type === "success"
+                  ? "bg-gradient-to-r from-green-900/50 to-emerald-900/50 text-green-300 border-green-500/50"
+                  : "bg-gradient-to-r from-red-900/50 to-rose-900/50 text-red-300 border-red-500/50"
+                  } backdrop-blur-sm animate-fadeIn`}>
                   {statusMessage.message}
                 </div>
               )}
 
-           
+
               <div className="text-center pt-4">
                 <button
                   type="submit"
@@ -451,11 +513,11 @@ export default function Register() {
                       : 'bg-gradient-to-r from-[#218c63] to-[#20553c] hover:from-[#20553c] hover:to-[#218c63] hover:scale-105 hover:shadow-2xl hover:shadow-[#218c63]/50'
                     }`}
                 >
-                  
+
                   {!isLoading && whatsappChecked && discordChecked && (
                     <div className="absolute inset-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12 -translate-x-full group-hover/button:translate-x-[200%] transition-transform duration-700"></div>
                   )}
-                  
+
                   <span className="relative z-10 flex items-center justify-center gap-3">
                     {isLoading ? (
                       <>
@@ -474,7 +536,7 @@ export default function Register() {
                 </button>
               </div>
 
-              
+
               <p className="text-center text-sm text-gray-500 mt-6">
                 By registering, you agree to participate in The MythX CTF Challenge
               </p>
@@ -483,10 +545,10 @@ export default function Register() {
           </div>
         </FadeIn>
 
-       
+
         <div className="text-center mt-12">
-          <Link 
-            href="/" 
+          <Link
+            href="/"
             className="inline-flex items-center gap-2 text-[#82a18a] hover:text-[#218c63] transition-colors font-medium group"
           >
             <svg className="w-5 h-5 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">

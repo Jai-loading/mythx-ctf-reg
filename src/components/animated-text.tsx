@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { motion } from "framer-motion"
+import { motion, Variants } from "framer-motion"
 
 interface AnimatedTextProps {
   text: string
@@ -20,15 +20,15 @@ export default function AnimatedText({ text, className = "", delay = 0 }: Animat
 
   const words = text.split(" ")
 
-  const container = {
+  const container: Variants = {
     hidden: { opacity: 0 },
-    visible: (i = 1) => ({
+    visible: {
       opacity: 1,
-      transition: { staggerChildren: 0.12, delayChildren: delay * i },
-    }),
+      transition: { staggerChildren: 0.12, delayChildren: delay },
+    },
   }
 
-  const child = {
+  const child: Variants = {
     visible: {
       opacity: 1,
       y: 0,

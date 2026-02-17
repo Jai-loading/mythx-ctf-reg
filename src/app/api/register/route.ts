@@ -1,7 +1,9 @@
-import dbConnect from "@/connection/db";
 import { limiter } from "@/connection/rateLimit";
-import User from "@/models/User";
 import { NextRequest, NextResponse } from "next/server";
+import { RegistrationSchema } from "@/lib/validations";
+import { logRegistrationAttempt } from "@/lib/s3";
+import { saveUserToDynamoDB, checkUserExists } from "@/lib/dynamodb";
+import { z } from "zod";
 
 export async function POST(req: NextRequest) {
   const rateLimitHeaders = limiter.checkNext(req, 10);
@@ -13,100 +15,68 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  await dbConnect();
-
   try {
-    const body = await req.json();
-    const { name, email, phone, college, branch, rollno, othercollege } = body;
+    const rawBody = await req.json();
 
-    // Basic required validation
-    if (!name || !email || !phone || !college) {
+    // 1. Zod Validation
+    const result = RegistrationSchema.safeParse(rawBody);
+
+    if (!result.success) {
       return NextResponse.json(
-        { message: "All required fields must be filled" },
+        { message: "Validation failed", errors: result.error.format() },
         { status: 400 }
       );
     }
 
-    // KIET-specific validation
-    if (college.toLowerCase().includes("kiet")) {
-      if (!branch || branch.trim() === "") {
-        return NextResponse.json(
-          { message: "Branch is required for KIET students" },
-          { status: 400 }
-        );
-      }
+    const body = result.data;
 
-      if (!rollno || rollno.trim() === "") {
-        return NextResponse.json(
-          { message: "Roll number is required for KIET students" },
-          { status: 400 }
-        );
-      }
-    }
-
-    // Check duplicate
-    const isRegister = await User.findOne({
-      $or: [{ email }, { phone }],
-    });
-
-    if (isRegister) {
+    // 2. Duplicate Check using DynamoDB (Primary efficient check)
+    const exists = await checkUserExists(body.email);
+    if (exists) {
+      await logRegistrationAttempt(body.email, "DUPLICATE_ATTEMPT", { ip: req.ip });
       return NextResponse.json(
-        { message: "You are already registered" },
+        { message: "This email is already registered." },
         { status: 409 }
       );
     }
 
-    // Create user
-    const newUser = await User.create({
-      name: name.trim(),
-      email: email.trim(),
-      phone: phone.trim(),
-      college: college.trim(),
-      branch: branch?.trim() || "",
-      rollno: rollno?.trim() || "",
-      othercollege: othercollege?.trim() || "",
+    // 3. Save to DynamoDB
+    await saveUserToDynamoDB(body);
+
+    // 4. Archive Log to S3 (Audit Trail)
+    await logRegistrationAttempt(body.email, "SUCCESS", {
+      college: body.college,
+      hasDocument: !!body.documentKey
     });
 
     return NextResponse.json(
-      { message: "Form submitted successfully", data: newUser },
+      { message: "Registration successful! Welcome to MythX Battleground." },
       { status: 201 }
     );
 
-  } catch (error) {
+  } catch (error: any) {
     console.error("Registration Error:", error);
+
+    if (error.name === "ConditionalCheckFailedException") {
+      return NextResponse.json({ message: "Email already registered." }, { status: 409 });
+    }
+
     return NextResponse.json(
-      { message: "Internal Server Error" },
+      { message: "Registration failed. Please contact support @ MythX." },
       { status: 500 }
     );
   }
 }
 
 
+// Updated GET route to reflect S3 usage
 export async function GET() {
-  await dbConnect();
-
-  try {
-    const total = await User.countDocuments({});
-
-    const fromKIET = await User.countDocuments({
-      college: { $regex: /kiet group of institutions/i },
-    });
-
-    const fromOthers = total - fromKIET;
-
-    return NextResponse.json(
-      {
-        total,
-        fromKIET,
-        fromOthers,
-      },
-      { status: 200 }
-    );
-  } catch (error) {
-    console.error("Error fetching registration data:", error);
-    return NextResponse.json(
-      { message: "Internal Server Error" },
-      { status: 500 }
-    );
-  }
+  return NextResponse.json(
+    {
+      message: "Direct counting via S3 is disabled for performance. Use the admin dashboard to sync logs.",
+      storageType: "AWS S3 (Cloud Native)"
+    },
+    { status: 200 }
+  );
 }
+
