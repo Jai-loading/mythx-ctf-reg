@@ -36,7 +36,6 @@ const nextConfig: NextConfig = {
     }
     return config;
   },
-  productionSourceMaps: false,
 };
 
 module.exports = nextConfig;
