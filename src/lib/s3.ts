@@ -1,4 +1,5 @@
 import { S3Client, PutObjectCommand, HeadObjectCommand } from "@aws-sdk/client-s3";
+// @ts-ignore - AWS SDK module resolution issues in some environments
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 const s3Client = new S3Client({

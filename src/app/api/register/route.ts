@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { RegistrationSchema } from "@/lib/validations";
 import { logRegistrationAttempt } from "@/lib/s3";
 import { saveUserToDynamoDB, checkUserExists } from "@/lib/dynamodb";
-import { z } from "zod";
+
 
 export async function POST(req: NextRequest) {
   const rateLimitHeaders = limiter.checkNext(req, 10);
@@ -23,12 +23,13 @@ export async function POST(req: NextRequest) {
 
     if (!result.success) {
       return NextResponse.json(
-        { message: "Validation failed", errors: result.error.format() },
+        { message: "Validation failed", errors: result.error.flatten().fieldErrors },
         { status: 400 }
       );
     }
 
     const body = result.data;
+
 
     // 2. Duplicate Check using DynamoDB (Primary efficient check)
     const exists = await checkUserExists(body.email);
