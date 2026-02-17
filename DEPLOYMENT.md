@@ -58,17 +58,24 @@ Create an IAM Role for your EC2 instance with the following policy:
 ```
 
 ## 4. EC2 Instance Preparation
-Connect to your EC2 (`t3.micro` recommended) and run:
 
+### For Ubuntu/Debian:
 ```bash
-# Update and Install Node.js 20+
 curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 sudo apt-get install -y nodejs nginx
-
-# Install PM2
 sudo npm install -g pm2
+```
 
-# Add Swap (Critical for build on 1GB RAM)
+### For Amazon Linux 2023:
+```bash
+sudo dnf update -y
+sudo dnf install -y nodejs nginx
+sudo npm install -g pm2
+```
+
+### Add Swap (Critical for build on 1GB RAM)
+Run this on **any** Linux distribution:
+```bash
 sudo fallocate -l 2G /swapfile && sudo chmod 600 /swapfile && sudo mkswap /swapfile
 sudo swapon /swapfile && echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
 ```
@@ -89,11 +96,19 @@ pm2 save
 pm2 startup
 ```
 
-## 6. Nginx Configuration (`/etc/nginx/sites-available/default`)
+## 6. Nginx Configuration
+
+### For Ubuntu:
+Edit `/etc/nginx/sites-available/default`
+
+### For Amazon Linux:
+Edit `/etc/nginx/conf.d/mythx.conf`
+
+**Configuration Content:**
 ```nginx
 server {
     listen 80;
-    server_name yourdomain.com;
+    server_name yourdomain.com; # Replace with your domain or IP
 
     location / {
         proxy_pass http://localhost:3000;
@@ -105,4 +120,10 @@ server {
     }
 }
 ```
-Apply with `sudo systemctl restart nginx`.
+
+**Restart Nginx:**
+```bash
+sudo systemctl restart nginx
+sudo systemctl enable nginx
+```
+
