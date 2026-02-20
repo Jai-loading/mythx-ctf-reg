@@ -1,0 +1,82 @@
+name: MythX CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main", "dev" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm install
+        
+      - name: Build Application
+        run: npm run build
+        env:
+          # Add any build-time env vars here if needed
+          NEXT_PUBLIC_GA_ID: ${{ secrets.NEXT_PUBLIC_GA_ID }}
+          
+      - name: Prepare Artifacts (Standalone)
+        if: github.ref == 'refs/heads/main'
+        run: |
+          mkdir deploy
+          cp -r .next/standalone/* deploy/
+          cp -r public deploy/
+          mkdir -p deploy/.next
+          cp -r .next/static deploy/.next/
+          # Create a zip of the deployment files
+          cd deploy && tar -czf ../deploy.tar.gz .
+          
+      - name: Deploy to EC2
+        if: github.ref == 'refs/heads/main'
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          # We transfer the tarball, extract it, and restart PM2
+          script: |
+            mkdir -p /var/www/mythx/MythX_Backup
+            # Backup current version just in case
+            cp -r /var/www/mythx/MythX/* /var/www/mythx/MythX_Backup/ || true
+            
+      - name: Upload Tarball via SCP
+        if: github.ref == 'refs/heads/main'
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: "deploy.tar.gz"
+          target: "/tmp"
+          
+      - name: Extract and Restart
+        if: github.ref == 'refs/heads/main'
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /var/www/mythx/MythX
+            # Extract the new build
+            tar -xzf /tmp/deploy.tar.gz -C .
+            # Ensure permissions are correct
+            chown -R ec2-user:ec2-user .
+            # Restart PM2 using the standalone server
+            # Note: standalone mode uses 'server.js'
+            pm2 delete mythx || true
+            pm2 start server.js --name "mythx" --env production
+            pm2 save
