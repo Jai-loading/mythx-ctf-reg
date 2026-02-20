@@ -33,13 +33,13 @@ const CountdownTimer = dynamic(() => import("@/components/Countdown"), {
 
 
 export default function Home() {
-   const gradientColor = "rgba(33, 140, 99";
+  const gradientColor = "rgba(33, 140, 99";
   const gradientOpacity = 0.4;
 
-   
+
 
   return (
-       <main className="poppins relative min-h-screen text-white bg-gradient-to-b from-[#050906] to-[#0e2b1d] overflow-hidden">
+    <main className="poppins relative min-h-screen text-white bg-gradient-to-b from-[#050906] to-[#0e2b1d] overflow-hidden">
 
       <Head>
         <meta name="twitter:creator" content="@technocrats" />
@@ -156,15 +156,15 @@ export default function Home() {
       <div className="absolute bottom-0 right-0 z-10 opacity-20 mix-blend-screen pointer-events-none hidden md:block">
         <Image src={design2} alt="" width={400} height={400} loading="lazy" style={{ width: 'auto', height: 'auto' }} className="rotate-180" />
       </div>
-          
+
 
       <div className="max-w-6xl mx-auto px-4 pt-16 pb-8 relative z-20 mt-0">
         <div className="flex align-middle place-content-center ">
 
-        <FadeIn direction="down" duration={0.7}>
-         <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-[#218c63] to-[#82a18a] bg-clip-text text-transparent"> The MYTHX CFT</h1>
-        </FadeIn>
-      </div>
+          <FadeIn direction="down" duration={0.7}>
+            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-[#218c63] to-[#82a18a] bg-clip-text text-transparent"> The MYTHX CTF</h1>
+          </FadeIn>
+        </div>
 
         <div className="text-center py-10 space-y-4">
 
@@ -184,7 +184,7 @@ export default function Home() {
           </FadeIn>
         </div>
 
-         <FadeIn direction="up" delay={0.8} duration={0.7}>
+        <FadeIn direction="up" delay={0.8} duration={0.7}>
           <div className="flex flex-col sm:flex-row justify-center items-center gap-4 py-8">
             <Link
               href="/register"
@@ -210,7 +210,7 @@ export default function Home() {
           </div>
         </FadeIn>
 
-         <div id="about" className="py-16 mb-3 border-t border-[#20553c]/40">
+        <div id="about" className="py-16 mb-3 border-t border-[#20553c]/40">
           <FadeIn>
             <h2 className="text-4xl mb-10 font-extrabold text-center mt-10 bg-gradient-to-r from-[#218c63] to-[#82a18a] bg-clip-text text-transparent">
               About The MythX CTF
@@ -245,7 +245,7 @@ export default function Home() {
               </FadeIn>
             </div>
 
-           { /*<FadeIn direction="right" delay={0.3}>
+            { /*<FadeIn direction="right" delay={0.3}>
               <div className="relative ">
                 <div className="flex flex-row h-full gap-4">
 
@@ -265,7 +265,7 @@ export default function Home() {
                     </div>
                   </div>
                 </div> */}
-                {/*<div className="flex justify-center w-full absolute bottom-0 left-0 top-90">
+            {/*<div className="flex justify-center w-full absolute bottom-0 left-0 top-90">
                   <h2 className="text-2xl font-extrabold text-center bg-gradient-to-r from-[#eef1f0] to-[#0a0a0a] bg-clip-text text-transparent">
                     Previous Cyber Battles | Highlights
                   </h2>
@@ -276,7 +276,7 @@ export default function Home() {
           </div>
         </div>
 
-         <div id="register-section" className="py-16 border-t border-[#20553c]/40 text-center scroll-mt-20">
+        <div id="register-section" className="py-16 border-t border-[#20553c]/40 text-center scroll-mt-20">
           <FadeIn>
             <h2 className="text-3xl md:text-4xl font-bold mb-10 text-[#218c63] uppercase tracking-wider">
               The Clock Is Ticking.
