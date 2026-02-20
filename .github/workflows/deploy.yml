@@ -32,7 +32,8 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: |
           mkdir deploy
-          cp -r .next/standalone/* deploy/
+          # Use /. instead of /* to include hidden folders like .next
+          cp -r .next/standalone/. deploy/
           cp -r public deploy/
           mkdir -p deploy/.next
           cp -r .next/static deploy/.next/
