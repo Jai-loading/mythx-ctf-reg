@@ -206,7 +206,7 @@ export default function Home() {
             <p className="text-lg md:text-xl mb-4 uppercase tracking-wider text-[#82a18a]">
               Mission Begins In
             </p>
-            <CountdownTimer targetDate="2026-02-24T12:00:00" />
+            <CountdownTimer targetDate="2026-03-21T22:00:00" />
           </div>
         </FadeIn>
 
