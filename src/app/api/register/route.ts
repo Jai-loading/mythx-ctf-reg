@@ -17,7 +17,8 @@ export async function POST(req: NextRequest) {
 
   // Extract IP once for all logging
   const forwarded = req.headers.get("x-forwarded-for");
-  const ip = forwarded ? forwarded.split(',')[0] : "unknown";
+  const realIp = req.headers.get("x-real-ip");
+  const ip = (forwarded ? forwarded.split(',')[0] : realIp) || "unknown";
 
   try {
     const rawBody = await req.json();
