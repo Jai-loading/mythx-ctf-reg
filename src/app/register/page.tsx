@@ -107,8 +107,8 @@ export default function Register() {
     if (selectedFile) {
       setIsUploading(true);
       try {
-        // 1. Get Pre-signed URL
-        const { data: uploadInfo } = await axios.post("/api/upload-url", {
+        // 1. Get Pre-signed URL (Relative path to support basePath)
+        const { data: uploadInfo } = await axios.post("api/upload-url", {
           fileName: selectedFile.name,
           fileType: selectedFile.type,
         });
@@ -130,7 +130,8 @@ export default function Register() {
     }
 
     try {
-      const response = await axios.post("/api/register", finalFormData);
+      // Relative path to support basePath
+      const response = await axios.post("api/register", finalFormData);
 
       toast.success("Registration successful! Data secured in S3 🚀");
       setStatusMessage({ type: "success", message: response.data.message });

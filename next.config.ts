@@ -7,6 +7,7 @@ dotenv.config();
 
 const nextConfig: NextConfig = {
   output: 'standalone', // Optimized for Docker/EC2 deployment
+  basePath: '/ctf2026',
   webpack(config: Configuration, { isServer }: { isServer: boolean }) {
     if (!isServer && process.env.NODE_ENV === 'production') {
       config.plugins = config.plugins || [];
