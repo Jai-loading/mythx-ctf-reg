@@ -15,6 +15,10 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // Extract IP once for all logging
+  const forwarded = req.headers.get("x-forwarded-for");
+  const ip = forwarded ? forwarded.split(',')[0] : "unknown";
+
   try {
     const rawBody = await req.json();
 
@@ -34,9 +38,6 @@ export async function POST(req: NextRequest) {
     // 2. Duplicate Check using DynamoDB (Primary efficient check)
     const exists = await checkUserExists(body.email);
     if (exists) {
-      const forwarded = req.headers.get("x-forwarded-for");
-      const ip = forwarded ? forwarded.split(',')[0] : "unknown";
-
       await logRegistrationAttempt(body.email, "DUPLICATE_ATTEMPT", { ip });
       return NextResponse.json(
 
@@ -51,7 +52,8 @@ export async function POST(req: NextRequest) {
     // 4. Archive Log to S3 (Audit Trail)
     await logRegistrationAttempt(body.email, "SUCCESS", {
       college: body.college,
-      hasDocument: !!body.documentKey
+      hasDocument: !!body.documentKey,
+      ip
     });
 
     return NextResponse.json(
@@ -61,6 +63,12 @@ export async function POST(req: NextRequest) {
 
   } catch (error: any) {
     console.error("Registration Error:", error);
+
+    // Capture the email if possible for the error log
+    try {
+      const email = (await req.clone().json())?.email || "unknown_error";
+      await logRegistrationAttempt(email, "SERVER_ERROR", { ip, error: error.message });
+    } catch { }
 
     if (error.name === "ConditionalCheckFailedException") {
       return NextResponse.json({ message: "Email already registered." }, { status: 409 });
