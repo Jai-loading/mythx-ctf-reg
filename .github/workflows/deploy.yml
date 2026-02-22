@@ -78,7 +78,7 @@ jobs:
 
             # Restart PM2 cleanly
             pm2 delete mythx || true
-            PORT=3000 pm2 start /var/www/mythx/app/server.js --name mythx --update-env
+            pm2 start /var/www/mythx/app/ecosystem.config.js
             pm2 save
 
             echo "Deployment completed successfully."
