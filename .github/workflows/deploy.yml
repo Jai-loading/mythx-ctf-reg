@@ -2,59 +2,40 @@ name: MythX CI/CD Pipeline
 
 on:
   push:
-    branches: [ "main", "dev" ]
-  pull_request:
     branches: [ "main" ]
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
-          
+
       - name: Install dependencies
-        run: npm install
-        
+        run: npm ci
+
       - name: Build Application
         run: npm run build
         env:
-          # Add any build-time env vars here if needed
           NEXT_PUBLIC_GA_ID: ${{ secrets.NEXT_PUBLIC_GA_ID }}
-          
-      - name: Prepare Artifacts (Standalone)
-        if: github.ref == 'refs/heads/main'
+
+      - name: Prepare Standalone Artifact
         run: |
           mkdir deploy
-          # Use /. instead of /* to include hidden folders like .next
           cp -r .next/standalone/. deploy/
           cp -r public deploy/
           mkdir -p deploy/.next
           cp -r .next/static deploy/.next/
-          # Create a zip of the deployment files
-          cd deploy && tar -czf ../deploy.tar.gz .
-          
-      - name: Deploy to EC2
-        if: github.ref == 'refs/heads/main'
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          # We transfer the tarball, extract it, and restart PM2
-          script: |
-            mkdir -p /var/www/mythx/MythX_Backup
-            # Backup current version just in case
-            cp -r /var/www/mythx/MythX/* /var/www/mythx/MythX_Backup/ || true
-            
-      - name: Upload Tarball via SCP
-        if: github.ref == 'refs/heads/main'
+          cd deploy
+          tar -czf ../deploy.tar.gz .
+
+      - name: Upload Artifact to EC2
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -62,29 +43,42 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           source: "deploy.tar.gz"
           target: "/tmp"
-          
-      - name: Extract and Restart
-        if: github.ref == 'refs/heads/main'
+
+      - name: Deploy on EC2
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            # 1. Navigate to project
-            cd /var/www/mythx/MythX
-            
-            # 2. Extract the new build (Artifact from GitHub)
-            tar -xzf /tmp/deploy.tar.gz -C .
-            
-            # 3. Explicitly set Node path (Ensures SSH session uses Node 20)
+            set -e
+
+            echo "Deploying MythX..."
+
+            # Ensure production folder exists
+            mkdir -p /var/www/mythx/app
+
+            # Backup previous release safely
+            if [ -d "/var/www/mythx/app" ]; then
+              rm -rf /var/www/mythx/app_backup || true
+              cp -r /var/www/mythx/app /var/www/mythx/app_backup || true
+            fi
+
+            # Clean production folder ONLY
+            rm -rf /var/www/mythx/app/*
+
+            # Extract new build
+            tar -xzf /tmp/deploy.tar.gz -C /var/www/mythx/app
+
+            # Fix permissions
+            sudo chown -R ec2-user:ec2-user /var/www/mythx/app
+
+            # Ensure correct Node version
             export PATH=$PATH:/home/ec2-user/.nvm/versions/node/v20.20.0/bin
-            
-            # 4. Correct Permissions
-            sudo chown -R ec2-user:ec2-user .
-            
-            # 5. Restart Site in Standalone Mode
-            # Standalone mode uses server.js and is significantly more memory efficient
+
+            # Restart PM2 cleanly
             pm2 delete mythx || true
-            PORT=3000 pm2 start server.js --name "mythx"
+            PORT=3000 pm2 start /var/www/mythx/app/server.js --name mythx --update-env
             pm2 save
+
+            echo "Deployment completed successfully."
