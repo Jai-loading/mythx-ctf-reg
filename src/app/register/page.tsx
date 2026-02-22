@@ -1,20 +1,19 @@
 "use client"
+
 import { useState, useEffect, FormEvent } from "react"
 import dynamic from "next/dynamic"
 import Image from "next/image"
 import Link from "next/link"
 import FadeIn from "@/components/fade-in"
-import Footer from "@/components/Footer"
-import design1 from "@/images/Group 4609.png"
-import design2 from "@/images/Group 4610.png";
 import axios from "axios"
-import { ToastContainer, toast } from 'react-toastify';
-import { useRouter } from 'next/navigation';
-import Head from "next/head"
+import { ToastContainer, toast } from 'react-toastify'
+import { useRouter } from 'next/navigation'
+import 'react-toastify/dist/ReactToastify.css'
+import { Shield, Users, Terminal, Radio, Target, CheckCircle2 } from "lucide-react"
 
 const AnimatedBackground = dynamic(() => import("@/components/animted-bg"), {
   ssr: false,
-  loading: () => <div className="fixed inset-0 bg-black bg-gradient-to-br from-black to-purple-950" />,
+  loading: () => <div className="fixed inset-0 bg-black bg-gradient-to-br from-black to-[#050906]" />,
 })
 
 const initialFormData = {
@@ -28,575 +27,299 @@ const initialFormData = {
   documentKey: "",
 };
 
-
 export default function Register() {
-
   const [formData, setFormData] = useState(initialFormData);
   const [isLoading, setIsLoading] = useState(false);
-  const [statusMessage, setStatusMessage] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [collegeOption, setCollegeOption] = useState<"kiet" | "other">("kiet");
   const [whatsappChecked, setWhatsappChecked] = useState(false);
   const [discordChecked, setDiscordChecked] = useState(false);
-
+  const [privacyChecked, setPrivacyChecked] = useState(false);
   const router = useRouter();
+  const [ripples, setRipples] = useState<Array<{ x: number; y: number; id: number }>>([]);
 
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
-
-  useEffect(() => {
-    console.log("%c MythX Protection System Active", "color:#05fff2");
-  }, []);
-
-  const validateEmail = (email: string) =>
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-
-  const validatePhone = (phone: string) =>
-    /^\d{10}$/.test(phone);
-
-  const validateNameLength = (name: string) =>
-    name.trim().length >= 2;
+  const addRipple = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const id = Date.now();
+    setRipples(prev => [...prev, { x: e.clientX - rect.left, y: e.clientY - rect.top, id }]);
+    setTimeout(() => setRipples(prev => prev.filter(r => r.id !== id)), 800);
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleWhatsappChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const checked = e.target.checked;
+    setWhatsappChecked(checked);
+    if (checked) window.open("https://chat.whatsapp.com/YOUR_WHATSAPP_GROUP_LINK", "_blank");
+  };
+
+  const handleDiscordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const checked = e.target.checked;
+    setDiscordChecked(checked);
+    if (checked) window.open("https://discord.gg/EXq267jVA", "_blank");
+  };
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
-    setStatusMessage(null);
 
-    let errors: string[] = [];
-
-    if (!validateNameLength(formData.name))
-      errors.push("Name must be at least 2 characters");
-
-    if (!validateEmail(formData.email))
-      errors.push("Invalid email");
-
-    if (!validatePhone(formData.phone))
-      errors.push("Phone must be 10 digits");
-
-    if (!formData.college)
-      errors.push("Please select college");
-
-    if (collegeOption === "kiet") {
-      if (!formData.branch)
-        errors.push("Branch is required");
-      if (!formData.rollno)
-        errors.push("Roll number is required");
-    }
-
-    if (!whatsappChecked)
-      errors.push("Please confirm WhatsApp group joining");
-
-    if (!discordChecked)
-      errors.push("Please confirm Discord group joining");
-
-    if (errors.length > 0) {
-      const errorMsg = errors.join(", ");
-      toast.error(errorMsg);
-      setStatusMessage({ type: "error", message: errorMsg });
+    if (!whatsappChecked || !discordChecked) {
+      toast.error("Please join both community groups to continue.");
       setIsLoading(false);
       return;
     }
 
-    // --- S3 File Upload Logic ---
-    let finalFormData = { ...formData };
-
-    if (selectedFile) {
-      setIsUploading(true);
-      try {
-        // 1. Get Pre-signed URL (Relative path to support basePath)
-        const { data: uploadInfo } = await axios.post("api/upload-url", {
-          fileName: selectedFile.name,
-          fileType: selectedFile.type,
-        });
-
-        // 2. Upload directly to S3
-        await axios.put(uploadInfo.uploadUrl, selectedFile, {
-          headers: { "Content-Type": selectedFile.type },
-        });
-
-        finalFormData.documentKey = uploadInfo.key;
-      } catch (err) {
-        toast.error("File upload failed. Please try again.");
-        setIsLoading(false);
-        setIsUploading(false);
-        return;
-      } finally {
-        setIsUploading(false);
-      }
+    if (!privacyChecked) {
+      toast.error("You must accept the privacy policy.");
+      setIsLoading(false);
+      return;
     }
 
     try {
-      // Relative path to support basePath
-      const response = await axios.post("api/register", finalFormData);
-
-      toast.success("Registration successful! Data secured in S3 🚀");
-      setStatusMessage({ type: "success", message: response.data.message });
-
-      setFormData(initialFormData);
-      setSelectedFile(null);
-      setWhatsappChecked(false);
-      setDiscordChecked(false);
-
-      setTimeout(() => {
-        router.push("/");
-      }, 3000);
-
+      await axios.post("api/register", formData);
+      toast.success("Registration successful! Prepare for battle.");
+      setTimeout(() => router.push("/"), 2500);
     } catch (error: any) {
-      const message =
-        error?.response?.data?.message || "Something went wrong";
-
-      toast.error(message);
-      setStatusMessage({ type: "error", message });
-
+      toast.error(error?.response?.data?.message || "Registration failed");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <main className="poppins relative min-h-screen text-white bg-gradient-to-b from-[#050906] to-[#0e2b1d] overflow-hidden">
+    <main className="poppins relative min-h-screen text-white bg-[#050906] overflow-hidden pt-44 pb-24">
+      <ToastContainer position="bottom-left" theme="dark" />
 
-      <Head>
-        <title>Register | The MythX CTF</title>
-      </Head>
-
-      <ToastContainer
-        position="top-right"
-        theme="dark"
-        toastStyle={{
-          background: '#0e2b1d',
-          border: '1px solid #218c63',
-          color: '#fff'
-        }}
-      />
-
-      <div className="fixed inset-0 z-10">
+      <div className="fixed inset-0 z-10 pointer-events-none">
         <AnimatedBackground />
       </div>
 
-      <div className="fixed top-20 left-10 w-72 h-72 bg-[#218c63]/10 rounded-full blur-3xl z-10"></div>
-      <div className="fixed bottom-20 right-10 w-96 h-96 bg-[#20553c]/10 rounded-full blur-3xl z-10"></div>
+      {/* AMBIENT LIGHTING */}
+      <div className="absolute top-0 w-full h-[100vh] bg-gradient-to-b from-[#218c63]/20 to-transparent pointer-events-none z-15" />
 
-      <div className="max-w-3xl mx-auto px-4 pt-20 pb-12 relative z-20">
-
+      <div className="max-w-4xl mx-auto px-6 relative z-20">
         <FadeIn>
-
-          <div className="text-center mb-12">
-            <div className="inline-block relative">
-              <h1 className="text-5xl md:text-6xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-[#218c63] via-[#82a18a] to-[#218c63] animate-gradient tracking-wider">
-                REGISTER FOR
-              </h1>
-              <div className="absolute -inset-1 bg-gradient-to-r from-[#218c63] to-[#20553c] opacity-30 blur-xl"></div>
-            </div>
-            <h2 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-widest">
-              THE MYTH<span className="text-[#218c63]">X</span>
-            </h2>
-            <div className="h-1 w-32 mx-auto bg-gradient-to-r from-transparent via-[#218c63] to-transparent mb-6"></div>
-            <p className="text-lg text-[#82a18a] font-light tracking-wide">
-              🎯 Enter the arena • 🔓 Break the code • 🚩 Capture the flag
+          <div className="text-center mb-16">
+            <h1 className="text-6xl md:text-[7rem] font-black text-white mb-6 uppercase tracking-tighter leading-none">
+              Join the <span className="text-[#218c63]">Battle</span>
+            </h1>
+            <p className="text-white font-black uppercase tracking-[0.4em] text-sm md:text-lg opacity-60">
+              Secure your slot in the community hub.
             </p>
           </div>
+
         </FadeIn>
 
         <FadeIn delay={0.2}>
-
-          <div className="relative group">
-
-            <div className="absolute -inset-0.5 bg-gradient-to-r from-[#218c63] via-[#20553c] to-[#218c63] rounded-2xl opacity-20 group-hover:opacity-40 blur transition duration-300"></div>
-
-            <form
-              onSubmit={handleSubmit}
-              className="relative bg-gradient-to-br from-[#0e2b1d]/90 via-[#050906]/90 to-[#0e2b1d]/90 backdrop-blur-xl border-2 border-[#20553c]/50 rounded-2xl shadow-2xl shadow-[#218c63]/20 p-8 md:p-12 space-y-8"
-            >
-              <div className="absolute top-0 left-0 w-20 h-20 border-t-4 border-l-4 border-[#218c63] rounded-tl-2xl"></div>
-              <div className="absolute bottom-0 right-0 w-20 h-20 border-b-4 border-r-4 border-[#218c63] rounded-br-2xl"></div>
-
-              <div className="relative group/input">
-                <label className="block mb-3 text-sm font-semibold text-[#82a18a] tracking-wider uppercase">
-                  Full Name
-                </label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    placeholder="Enter your full name"
-                    required
-                    disabled={isLoading}
-                    className="bg-[#050906]/80 border-2 border-[#20553c]/50 focus:border-[#218c63] text-white rounded-xl block w-full p-4 pl-12 transition-all duration-300 placeholder:text-gray-600 focus:ring-2 focus:ring-[#218c63]/30 focus:outline-none"
-                  />
-                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#218c63]">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                  </div>
-                </div>
+          <div className="relative rounded-[3rem] bg-white/[0.03] backdrop-blur-3xl border border-white/10 p-10 md:p-20 shadow-2xl overflow-hidden">
+            <form onSubmit={handleSubmit} className="space-y-10">
+              <div className="grid md:grid-cols-2 gap-6">
+                <InputField
+                  label="Full Name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  placeholder="Jane Smith"
+                  icon={<Users className="w-3.5 h-3.5 text-[#218c63]" />}
+                />
+                <InputField
+                  label="Email Address"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  placeholder="jane@university.edu"
+                  type="email"
+                  icon={<Terminal className="w-3.5 h-3.5 text-[#218c63]" />}
+                />
               </div>
 
-              <div className="relative group/input">
-                <label className="block mb-3 text-sm font-semibold text-[#82a18a] tracking-wider uppercase">
-                  Email Address
-                </label>
-                <div className="relative">
-                  <input
-                    type="email"
-                    name="email"
-                    placeholder="your.email@example.com"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    required
-                    disabled={isLoading}
-                    className="bg-[#050906]/80 border-2 border-[#20553c]/50 focus:border-[#218c63] text-white rounded-xl block w-full p-4 pl-12 transition-all duration-300 placeholder:text-gray-600 focus:ring-2 focus:ring-[#218c63]/30 focus:outline-none"
-                  />
-                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#218c63]">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-
-              <div className="relative group/input">
-                <label className="block mb-3 text-sm font-semibold text-[#82a18a] tracking-wider uppercase">
-                  Phone Number
-                </label>
-                <div className="relative">
-                  <input
-                    type="tel"
-                    name="phone"
-                    placeholder="10-digit phone number"
-                    value={formData.phone}
-                    onChange={(e) => {
-                      if (/^\d{0,10}$/.test(e.target.value)) {
-                        setFormData(prev => ({ ...prev, phone: e.target.value }));
-                      }
-                    }}
-                    required
-                    disabled={isLoading}
-                    className="bg-[#050906]/80 border-2 border-[#20553c]/50 focus:border-[#218c63] text-white rounded-xl block w-full p-4 pl-12 transition-all duration-300 placeholder:text-gray-600 focus:ring-2 focus:ring-[#218c63]/30 focus:outline-none"
-                  />
-                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#218c63]">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-
-
-              <div className="relative">
-                <label className="block mb-3 text-sm font-semibold text-[#82a18a] tracking-wider uppercase">
-                  College / Institution
-                </label>
-
-                <div className="flex gap-6 mb-4">
-                  <label className="relative flex items-center gap-3 cursor-pointer group">
-                    <input
-                      type="radio"
-                      checked={collegeOption === "kiet"}
-                      onChange={() => {
-                        setCollegeOption("kiet");
-                        setFormData(prev => ({
-                          ...prev,
-                          college: "KIET Group of Institutions"
-                        }));
-                      }}
-                      className="appearance-none w-5 h-5 border-2 border-[#20553c] rounded-full checked:border-[#218c63] checked:border-4 transition-all duration-200 cursor-pointer"
-                    />
-                    <span className="text-white font-medium group-hover:text-[#218c63] transition-colors">
-                      KIET
-                    </span>
-                  </label>
-
-                  <label className="relative flex items-center gap-3 cursor-pointer group">
-                    <input
-                      type="radio"
-                      checked={collegeOption === "other"}
-                      onChange={() => {
-                        setCollegeOption("other");
-                        setFormData(prev => ({ ...prev, college: "", branch: "" }));
-                      }}
-                      className="appearance-none w-5 h-5 border-2 border-[#20553c] rounded-full checked:border-[#218c63] checked:border-4 transition-all duration-200 cursor-pointer"
-                    />
-                    <span className="text-white font-medium group-hover:text-[#218c63] transition-colors">
-                      Other
-                    </span>
-                  </label>
-                </div>
-
-                {collegeOption === "other" && (
-                  <div className="relative">
-                    <input
-                      type="text"
-                      name="college"
-                      placeholder="Enter your Organization name"
-                      value={formData.college}
-                      onChange={handleInputChange}
-                      required
-                      disabled={isLoading}
-                      className="bg-[#050906]/80 border-2 border-[#20553c]/50 focus:border-[#218c63] text-white rounded-xl block w-full p-4 pl-12 transition-all duration-300 placeholder:text-gray-600 focus:ring-2 focus:ring-[#218c63]/30 focus:outline-none"
-                    />
-                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#218c63]">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                      </svg>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-
-
-
-              {/* Roll Number Field - Only for KIET students */}
-              {collegeOption === "kiet" && (
-                <div className="relative group/input">
-                  <label className="block mb-3 text-sm font-semibold text-[#82a18a] tracking-wider uppercase">
-                    Roll Number
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      name="rollno"
-                      placeholder="Enter your roll number"
-                      value={formData.rollno}
-                      onChange={handleInputChange}
-                      required
-                      disabled={isLoading}
-                      className="bg-[#050906]/80 border-2 border-[#20553c]/50 focus:border-[#218c63] text-white rounded-xl block w-full p-4 pl-12 transition-all duration-300 placeholder:text-gray-600 focus:ring-2 focus:ring-[#218c63]/30 focus:outline-none"
-                    />
-                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#218c63]">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              <div className="relative group/input">
-                <label className="block mb-3 text-sm font-semibold text-[#82a18a] tracking-wider uppercase">
-                  Branch / Department
-                </label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    name="branch"
-                    placeholder={collegeOption === "other" ? "Not required for other colleges" : "e.g., Computer Science, IT, ECE"}
-                    value={formData.branch}
-                    onChange={handleInputChange}
-                    required={collegeOption === "kiet"}
-                    disabled={isLoading || collegeOption === "other"}
-                    className="bg-[#050906]/80 border-2 border-[#20553c]/50 focus:border-[#218c63] text-white rounded-xl block w-full p-4 pl-12 transition-all duration-300 placeholder:text-gray-600 focus:ring-2 focus:ring-[#218c63]/30 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
-                  />
-                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#218c63]">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-
-              <div className="relative group/input">
-                <label className="block mb-3 text-sm font-semibold text-[#82a18a] tracking-wider uppercase">
-                  Verify Student ID / Document (Optional)
-                </label>
-                <div className="relative">
-                  <input
-                    type="file"
-                    accept=".jpg,.jpeg,.png,.pdf"
-                    onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
-                    disabled={isLoading}
-                    className="hidden"
-                    id="file-upload"
-                  />
-                  <label
-                    htmlFor="file-upload"
-                    className="flex flex-col items-center justify-center bg-[#050906]/80 border-2 border-dashed border-[#20553c]/50 hover:border-[#218c63] text-white rounded-xl p-6 cursor-pointer transition-all duration-300"
-                  >
-                    <svg className={`w-8 h-8 mb-2 ${selectedFile ? 'text-[#218c63]' : 'text-gray-500'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                    </svg>
-                    <span className="text-sm font-medium">
-                      {selectedFile ? selectedFile.name : "Click to upload (JPG, PNG, PDF)"}
-                    </span>
-                    {selectedFile && <span className="text-xs text-[#218c63] mt-1">File selected</span>}
-                  </label>
-                </div>
-              </div>
-
-              {/* WhatsApp and Discord Group Checkboxes */}
-
-              <div className="relative space-y-4 pt-4">
-                <label className="block mb-3 text-sm font-semibold text-[#82a18a] tracking-wider uppercase">
-                  Join Community Groups
-                </label>
+              <div className="grid md:grid-cols-2 gap-6">
+                <InputField
+                  label="Phone Number"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={(e: any) => {
+                    if (/^\d{0,10}$/.test(e.target.value)) handleInputChange(e);
+                  }}
+                  placeholder="9876543210"
+                  type="tel"
+                  icon={<Radio className="w-3.5 h-3.5 text-[#218c63]" />}
+                />
 
                 <div className="space-y-3">
-                  <label className="flex items-start gap-3 cursor-pointer group p-4 rounded-xl border-2 border-[#20553c]/50 hover:border-[#218c63]/50 transition-all duration-300 bg-[#050906]/40">
-                    <input
-                      type="checkbox"
-                      checked={whatsappChecked}
-                      onChange={(e) => setWhatsappChecked(e.target.checked)}
-                      className="mt-1 appearance-none w-5 h-5 border-2 border-[#20553c] rounded checked:bg-[#218c63] checked:border-[#218c63] transition-all duration-200 cursor-pointer"
-                    />
-                    <div className="flex-1">
-                      <span className="text-white font-medium group-hover:text-[#218c63] transition-colors block">
-                        Join WhatsApp Group (Mandatory)
-                      </span>
-                      <a
-                        href="https://chat.whatsapp.com/YOUR_WHATSAPP_GROUP_LINK"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-sm text-[#82a18a] hover:text-[#218c63] underline transition-colors mt-1 inline-block"
-                      >
-                        Click here to join WhatsApp group →
-                      </a>
-                    </div>
+                  <label className="text-xs font-black uppercase tracking-[0.3em] text-[#218c63] flex items-center gap-2">
+                    <Target className="w-3 h-3" /> Institution Type
                   </label>
-
-                  <label className="flex items-start gap-3 cursor-pointer group p-4 rounded-xl border-2 border-[#20553c]/50 hover:border-[#218c63]/50 transition-all duration-300 bg-[#050906]/40">
-                    <input
-                      type="checkbox"
-                      checked={discordChecked}
-                      onChange={(e) => setDiscordChecked(e.target.checked)}
-                      className="mt-1 appearance-none w-5 h-5 border-2 border-[#20553c] rounded checked:bg-[#218c63] checked:border-[#218c63] transition-all duration-200 cursor-pointer"
-                    />
-                    <div className="flex-1">
-                      <span className="text-white font-medium group-hover:text-[#218c63] transition-colors block">
-                        Join Discord Server (Mandatory)
-                      </span>
-                      <a
-                        href="https://discord.gg/EXq267jVA"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-sm text-[#82a18a] hover:text-[#218c63] underline transition-colors mt-1 inline-block"
-                      >
-                        Click here to join Discord server →
-                      </a>
-                    </div>
-                  </label>
+                  <div className="grid grid-cols-2 gap-3 p-1.5 bg-white/5 rounded-xl border border-white/10">
+                    <button
+                      type="button"
+                      onClick={() => setCollegeOption("kiet")}
+                      className={`py-3 rounded-lg text-xs font-black tracking-widest transition-all ${collegeOption === "kiet" ? "bg-[#218c63] text-white shadow-[0_0_15px_rgba(33,140,99,0.5)]" : "text-gray-400 hover:text-white"}`}
+                    >
+                      KIET
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setCollegeOption("other")}
+                      className={`py-3 rounded-lg text-xs font-black tracking-widest transition-all ${collegeOption === "other" ? "bg-[#218c63] text-white shadow-[0_0_15px_rgba(33,140,99,0.5)]" : "text-gray-400 hover:text-white"}`}
+                    >
+                      OTHER
+                    </button>
+                  </div>
                 </div>
-
-                {(!whatsappChecked || !discordChecked) && (
-                  <p className="text-sm text-amber-400/80 mt-2 flex items-center gap-2">
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                    </svg>
-                    You must join both groups to complete registration
-                  </p>
-                )}
               </div>
 
-
-              {statusMessage && (
-                <div className={`p-5 rounded-xl text-center font-medium border-2 ${statusMessage.type === "success"
-                  ? "bg-gradient-to-r from-green-900/50 to-emerald-900/50 text-green-300 border-green-500/50"
-                  : "bg-gradient-to-r from-red-900/50 to-rose-900/50 text-red-300 border-red-500/50"
-                  } backdrop-blur-sm animate-fadeIn`}>
-                  {statusMessage.message}
+              {collegeOption === "other" && (
+                <div className="animate-fadeIn">
+                  <InputField
+                    label="Organisation / College Name"
+                    name="college"
+                    value={formData.college}
+                    onChange={handleInputChange}
+                    placeholder="MIT Media Lab / Acme Corp"
+                  />
                 </div>
               )}
 
+              {collegeOption === "kiet" && (
+                <div className="grid md:grid-cols-2 gap-6 animate-fadeIn">
+                  <InputField
+                    label="Roll Number"
+                    name="rollno"
+                    value={formData.rollno}
+                    onChange={handleInputChange}
+                    placeholder="2100290100042"
+                  />
+                  <InputField
+                    label="Branch"
+                    name="branch"
+                    value={formData.branch}
+                    onChange={handleInputChange}
+                    placeholder="Computer Science & Engineering"
+                  />
+                </div>
+              )}
 
-              <div className="text-center pt-4">
+              <div className="pt-8 border-t border-white/5">
+                <p className="text-sm font-black uppercase tracking-[0.3em] text-[#218c63] text-center mb-6">Join our community — Required</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <CommunityLink
+                    checked={whatsappChecked}
+                    onChange={handleWhatsappChange}
+                    label="Join WhatsApp"
+                    icon={
+                      <svg viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor">
+                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" />
+                        <path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.122 1.532 5.855L.058 23.267a.5.5 0 0 0 .611.635l5.555-1.459A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 0 1-5.012-1.374l-.36-.214-3.724.977.998-3.645-.235-.374A9.818 9.818 0 0 1 2.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z" />
+                      </svg>
+                    }
+                  />
+                  <CommunityLink
+                    checked={discordChecked}
+                    onChange={handleDiscordChange}
+                    label="Join Discord"
+                    icon={
+                      <svg viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor">
+                        <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
+                      </svg>
+                    }
+                  />
+                </div>
+              </div>
+
+              {/* PRIVACY POLICY CHECKBOX */}
+              <div className="flex items-center justify-center gap-3 py-2">
+                <label className="flex items-center gap-3 cursor-pointer group">
+                  <div className={`w-5 h-5 rounded border-2 transition-all flex items-center justify-center ${privacyChecked ? "bg-[#218c63] border-[#218c63]" : "bg-white/5 border-white/20 group-hover:border-[#218c63]"}`}>
+                    {privacyChecked && <CheckCircle2 className="w-3 h-3 text-white" />}
+                  </div>
+                  <input
+                    type="checkbox"
+                    className="hidden"
+                    checked={privacyChecked}
+                    onChange={(e) => setPrivacyChecked(e.target.checked)}
+                  />
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 group-hover:text-white transition-colors">
+                    I accept the <Link href="/privacy" className="text-[#218c63] hover:underline underline-offset-4">Privacy Policy</Link>
+                  </span>
+                </label>
+              </div>
+
+              <div className="pt-6 flex justify-center">
                 <button
                   type="submit"
-                  disabled={isLoading || !whatsappChecked || !discordChecked}
-                  className={`relative group/button w-full md:w-auto border-2 border-[#218c63] text-white font-black text-lg py-4 px-16 rounded-xl transition-all duration-300 tracking-widest overflow-hidden
-                  ${isLoading || !whatsappChecked || !discordChecked
-                      ? 'bg-[#20553c] cursor-not-allowed opacity-70'
-                      : 'bg-gradient-to-r from-[#218c63] to-[#20553c] hover:from-[#20553c] hover:to-[#218c63] hover:scale-105 hover:shadow-2xl hover:shadow-[#218c63]/50'
-                    }`}
+                  disabled={isLoading}
+                  onClick={addRipple}
+                  className="group relative overflow-hidden max-w-sm w-full py-6 rounded-2xl bg-[#218c63] text-white font-black text-xl uppercase tracking-[0.15em] transition-all duration-500 shadow-[0_0_40px_rgba(33,140,99,0.4)] hover:shadow-[0_0_60px_rgba(33,140,99,0.7)] hover:scale-[1.03] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed select-none border border-[#218c63]/30"
                 >
-
-                  {!isLoading && whatsappChecked && discordChecked && (
-                    <div className="absolute inset-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12 -translate-x-full group-hover/button:translate-x-[200%] transition-transform duration-700"></div>
-                  )}
-
+                  {/* Shimmer sweep on hover */}
+                  <span className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
+                  {/* Ripple spots */}
+                  {ripples.map(r => (
+                    <span
+                      key={r.id}
+                      className="absolute rounded-full bg-white/25 animate-ripple pointer-events-none"
+                      style={{ left: `${r.x}px`, top: `${r.y}px` }}
+                    />
+                  ))}
                   <span className="relative z-10 flex items-center justify-center gap-3">
                     {isLoading ? (
                       <>
-                        <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                        </svg>
-                        SUBMITTING...
+                        <span className="inline-block w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                        Submitting...
                       </>
                     ) : (
-                      <>
-                        🚀 JOIN THE BATTLE
-                      </>
+                      "Join the Battle"
                     )}
                   </span>
                 </button>
               </div>
-
-
-              <p className="text-center text-sm text-gray-500 mt-6">
-                By registering, you agree to participate in The MythX CTF Challenge
-              </p>
-
             </form>
           </div>
         </FadeIn>
-
-
-        <div className="text-center mt-12">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-[#82a18a] hover:text-[#218c63] transition-colors font-medium group"
-          >
-            <svg className="w-5 h-5 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-            Back to Home
-          </Link>
-        </div>
-
       </div>
-
-      <Footer />
-
-      <style jsx>{`
-        @keyframes gradient {
-          0%, 100% {
-            background-position: 0% 50%;
-          }
-          50% {
-            background-position: 100% 50%;
-          }
-        }
-        
-        .animate-gradient {
-          background-size: 200% 200%;
-          animation: gradient 3s ease infinite;
-        }
-
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-            transform: translateY(-10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        .animate-fadeIn {
-          animation: fadeIn 0.5s ease-out;
-        }
-
-        input[type="checkbox"]:checked {
-          background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
-        }
-      `}</style>
     </main>
   );
+}
+
+function InputField({ label, name, value, onChange, placeholder, type = "text", icon }: any) {
+  return (
+    <div className="space-y-2">
+      <label className="text-xs font-bold uppercase tracking-[0.35em] text-[#218c63]/80 flex items-center gap-2">
+        {icon} {label}
+      </label>
+      <input
+        type={type}
+        name={name}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        required
+        className="w-full bg-white/[0.04] border border-white/8 text-white rounded-lg px-4 py-3.5 outline-none font-medium text-sm placeholder:text-white/20 focus:border-[#218c63]/50 focus:bg-white/[0.07] focus:shadow-[0_0_0_3px_rgba(33,140,99,0.1)] transition-all"
+      />
+    </div>
+  )
+}
+
+function CommunityLink({ checked, onChange, label, icon }: any) {
+  return (
+    <label className={`flex items-center gap-4 p-5 rounded-2xl border-2 cursor-pointer transition-all duration-300 group ${checked
+      ? "bg-[#218c63]/15 border-[#218c63]/50 shadow-[0_0_20px_rgba(33,140,99,0.1)]"
+      : "bg-white/[0.02] border-white/5 hover:border-[#218c63]/25 hover:bg-white/[0.04]"
+      }`}>
+      <div className={`shrink-0 transition-colors duration-300 ${checked ? "text-[#218c63]" : "text-gray-600 group-hover:text-[#218c63]/60"
+        }`}>
+        {icon}
+      </div>
+      <span className={`font-black uppercase tracking-[0.2em] text-base transition-colors duration-300 ${checked ? "text-white" : "text-gray-500 group-hover:text-gray-300"
+        }`}>{label}</span>
+      <div className={`ml-auto w-6 h-6 rounded-lg flex items-center justify-center border-2 shrink-0 transition-all ${checked ? "bg-[#218c63] border-[#218c63]" : "border-white/10 group-hover:border-[#218c63]/40"
+        }`}>
+        {checked && <CheckCircle2 className="w-3.5 h-3.5 text-white" />}
+      </div>
+      <input type="checkbox" checked={checked} onChange={onChange} className="hidden" />
+    </label>
+  )
 }

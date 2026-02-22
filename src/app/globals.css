@@ -1,6 +1,142 @@
 @import "tailwindcss";
 
+:root {
+  --primary: #218c63;
+  --secondary: #0e2b1d;
+  --background: #050906;
+}
+
+body {
+  background-color: var(--background);
+  color: white;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
 
 .poppins {
   font-family: 'Poppins', sans-serif;
+}
+
+/* CUSTOM SCROLLBAR */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #112a1f;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+/* SELECTION COLOR */
+::selection {
+  background: var(--primary);
+  color: white;
+}
+
+/* SMOOTH SCROLLING */
+html {
+  scroll-behavior: smooth;
+}
+
+/* CUSTOM ANIMATIONS */
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes energy-flow {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  80% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(200%);
+    opacity: 0;
+  }
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+.animate-energy-flow {
+  animation: energy-flow 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.animate-spin-slow {
+  animation: spin-slow 12s linear infinite;
+}
+
+@keyframes ripple-expand {
+  from {
+    width: 0;
+    height: 0;
+    opacity: 0.5;
+    transform: translate(-50%, -50%) scale(0);
+  }
+
+  to {
+    width: 600px;
+    height: 600px;
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.animate-ripple {
+  position: absolute;
+  border-radius: 9999px;
+  animation: ripple-expand 0.8s ease-out forwards;
+}
+
+
+/* GLASSMORPHISM UTILITY */
+.glass {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* GRADIENT TEXT */
+.text-gradient {
+  background: linear-gradient(to right, #ffffff, #218c63);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
