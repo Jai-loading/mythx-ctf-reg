@@ -32,6 +32,7 @@ jobs:
           cp -r public deploy/
           mkdir -p deploy/.next
           cp -r .next/static deploy/.next/
+          cp ecosystem.config.js deploy/
           cd deploy
           tar -czf ../deploy.tar.gz .
 
