@@ -78,7 +78,7 @@ export default function Register() {
     }
 
     try {
-      await axios.post("api/register", formData);
+      await axios.post("/api/register", formData);
       toast.success("Registration successful! Prepare for battle.");
       setTimeout(() => router.push("/"), 2500);
     } catch (error: any) {
