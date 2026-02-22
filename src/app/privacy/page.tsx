@@ -5,8 +5,7 @@ import FadeIn from "@/components/fade-in"
 import { ShieldCheck, EyeOff, Server, FileText, Share2, Database, Users } from "lucide-react"
 
 const AnimatedBackground = dynamic(() => import("@/components/animted-bg"), {
-    ssr: false,
-    loading: () => <div className="fixed inset-0 bg-black bg-gradient-to-br from-black to-purple-950" />,
+    loading: () => <div className="fixed inset-0 bg-[#050906]" />,
 })
 
 export default function Privacy() {
@@ -56,7 +55,7 @@ export default function Privacy() {
 
                 <FadeIn delay={0.6}>
                     <div className="mt-20 text-center">
-                        <p className="text-gray-500 font-black uppercase tracking-[0.5em] text-[10px] mb-4">Empowered by Technocrats</p>
+                        <p className="text-gray-500 font-black uppercase tracking-[0.5em] text-[10px] mb-4">Empowered by MythX Community</p>
                         <p className="text-gray-600 font-medium italic">Latest Revision: 22 Feb 2026</p>
                     </div>
                 </FadeIn>

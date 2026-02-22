@@ -13,7 +13,7 @@ import { Shield, Target, Zap, Trophy, Users, Globe, Calendar, CheckCircle2, Chev
 
 const AnimatedBackground = dynamic(() => import("@/components/animted-bg"), {
   ssr: false,
-  loading: () => <div className="fixed inset-0 bg-black bg-gradient-to-br from-black to-purple-950" />,
+  loading: () => <div className="fixed inset-0 bg-[#050906]" />,
 })
 
 const CountdownTimer = dynamic(() => import("@/components/Countdown"), {
@@ -25,41 +25,33 @@ const CountdownTimer = dynamic(() => import("@/components/Countdown"), {
   ),
 })
 
-const ThreeDLogo = dynamic(() => import("@/components/ThreeDLogo"), {
-  ssr: false,
-  loading: () => (
-    <div className="w-full aspect-square flex items-center justify-center rounded-[3rem] bg-[#050906] shadow-[0_0_100px_rgba(33,140,99,0.08)]">
-      <div className="w-12 h-12 border-4 border-[#218c63]/20 border-t-[#00ff9d] rounded-full animate-spin" />
-    </div>
-  ),
-})
 
 export default function Home() {
   const gradientColor = "rgba(33, 140, 99"
   const gradientOpacity = 0.4
 
   return (
-    <main className="poppins relative min-h-screen text-white bg-[#050906] overflow-hidden">
-      <div className="fixed inset-0 z-10">
+    <main className="poppins relative w-full text-white bg-[#050906] overflow-x-hidden">
+      <div className="fixed inset-0 z-10 pointer-events-none">
         <AnimatedBackground />
       </div>
 
       {/* HERO SECTION */}
-      <section className="relative z-20 pt-48 pb-24 px-6 max-w-7xl mx-auto min-h-screen flex flex-col justify-center items-center">
+      <section className="relative z-10 pt-32 sm:pt-48 pb-12 sm:pb-24 px-4 sm:px-6 max-w-7xl mx-auto min-h-screen flex flex-col justify-center items-center bg-transparent snap-start snap-always shrink-0 w-full">
         <FadeIn>
           <div className="text-center mb-12">
-            <div className="flex flex-col items-center mb-8">
-              <h1 className="text-6xl sm:text-7xl md:text-8xl lg:text-[10rem] font-black leading-none tracking-tighter uppercase">
+            <div className="flex flex-col items-center mb-6 sm:mb-8">
+              <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-[10rem] font-black leading-none tracking-tighter uppercase break-words w-full">
                 Myth<span className="text-[#218c63]">X</span>
               </h1>
-              <span className="text-sm md:text-2xl font-medium lowercase tracking-[0.8em] opacity-50 mt-4 md:mt-2">
+              <span className="text-xs sm:text-sm md:text-2xl font-medium lowercase tracking-[0.8em] opacity-50 mt-2">
                 presents
               </span>
             </div>
-            <h2 className="text-3xl sm:text-5xl md:text-6xl lg:text-[5.5rem] font-black leading-tight tracking-normal uppercase mb-12 text-white/90 whitespace-nowrap">
-              An Endgame Protocol : <span className="text-[#218c63]">CTF</span>
+            <h2 className="text-2xl sm:text-5xl md:text-6xl lg:text-[5.5rem] font-black leading-tight tracking-normal uppercase mb-8 sm:mb-12 text-white/90">
+              An Endgame Protocol : <br className="flex sm:hidden" /><span className="text-[#218c63]">CTF</span>
             </h2>
-            <p className="text-lg md:text-xl text-gray-400 font-medium max-w-3xl mx-auto mb-16 leading-relaxed">
+            <p className="text-sm sm:text-lg md:text-xl text-gray-400 font-medium max-w-3xl mx-auto mb-12 sm:mb-16 leading-relaxed px-2">
               Decoding vulnerabilities. Exploiting weaknesses. Capture the Flag in the ultimate cybersecurity arena.
             </p>
             <div className="flex flex-col sm:flex-row justify-center items-center gap-6">
@@ -88,27 +80,17 @@ export default function Home() {
         </FadeIn>
       </section>
 
-      {/* SCROLL INDICATOR */}
-      <div className="relative z-20 flex justify-center -mt-16 pb-8 pointer-events-none">
-        <div className="flex flex-col items-center gap-2 animate-bounce opacity-40">
-          <span className="text-[9px] font-black uppercase tracking-[0.5em] text-gray-500">Scroll</span>
-          <svg className="w-4 h-4 text-[#218c63]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-          </svg>
-        </div>
-      </div>
-
       {/* ABOUT SECTION */}
-      <section id="about" className="relative z-20 py-32 px-6 border-t border-white/5 bg-black/40">
-        <div className="max-w-6xl mx-auto">
+      <section id="about" className="relative z-20 min-h-screen w-full flex items-center py-20 px-4 sm:px-6 bg-[#050906]/40 backdrop-blur-xl border-t border-[#218c63]/10 snap-start snap-always shrink-0">
+        <div className="max-w-6xl mx-auto w-full">
           <FadeIn>
-            <div className="flex flex-col lg:flex-row items-center gap-20">
-              <div className="lg:w-1/2 space-y-8">
-                <p className="text-[#218c63] font-black tracking-[0.4em] uppercase text-xs">Community Vision</p>
-                <h2 className="text-4xl md:text-7xl font-black uppercase tracking-tighter leading-none">
+            <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-20">
+              <div className="lg:w-1/2 space-y-6 sm:space-y-8 text-center lg:text-left">
+                <p className="text-[#218c63] font-black tracking-[0.4em] uppercase text-[10px] sm:text-xs">Community Vision</p>
+                <h2 className="text-3xl sm:text-4xl md:text-7xl font-black uppercase tracking-tighter leading-none break-words">
                   The <span className="text-[#218c63]">MythX</span> Hub
                 </h2>
-                <p className="text-lg text-gray-400 font-medium leading-relaxed">
+                <p className="text-sm sm:text-lg text-gray-400 font-medium leading-relaxed">
                   We are a new community focusing on creating a platform/hub for likeminded people to create, compete, and collaborate with each other. The MythX CTF is our flagship operation to bring the best minds together in a unified arena.
                 </p>
                 <div className="grid grid-cols-2 gap-8 pt-6">
@@ -127,10 +109,18 @@ export default function Home() {
                   </Link>
                 </div>
               </div>
-              <div className="lg:w-1/2 relative">
-                <ThreeDLogo logoSrc={logo.src} />
-                <div className="absolute -top-10 -right-10 w-40 h-40 bg-[#218c63]/10 rounded-full blur-[60px] pointer-events-none" />
-                <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-[#218c63]/5 rounded-full blur-[60px] pointer-events-none" />
+              <div className="lg:w-1/2 relative flex justify-center items-center w-full mt-10 lg:mt-0">
+                <div className="relative w-[200px] h-[200px] sm:w-[300px] sm:h-[300px] lg:w-[400px] lg:h-[400px] animate-float">
+                  <Image
+                    src={logo}
+                    alt="MythX Logo"
+                    fill
+                    className="object-contain drop-shadow-[0_0_30px_rgba(33,140,99,0.3)]"
+                    priority
+                  />
+                </div>
+                {/* Simplified background static glows instead of huge mutating blurs */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-[#218c63]/10 rounded-full blur-[80px] pointer-events-none" />
               </div>
             </div>
           </FadeIn>
@@ -138,12 +128,12 @@ export default function Home() {
       </section>
 
       {/* TIMELINE SECTION */}
-      <section id="timeline" className="relative z-20 py-32 px-6 border-t border-white/5 bg-transparent backdrop-blur-[2px]">
-        <div className="max-w-6xl mx-auto">
+      <section id="timeline" className="relative z-30 min-h-screen w-full py-20 sm:py-32 px-4 sm:px-6 bg-transparent border-t border-[#218c63]/10 snap-start snap-always shrink-0">
+        <div className="max-w-6xl mx-auto w-full">
           <FadeIn>
-            <div className="text-center mb-24">
-              <h2 className="text-4xl md:text-7xl font-black uppercase tracking-tighter mb-4">Event <span className="text-[#218c63]">Timeline</span></h2>
-              <div className="h-1.5 w-24 mx-auto bg-[#218c63] rounded-full shadow-[0_0_15px_#218c63]" />
+            <div className="text-center mb-16 sm:mb-24 mt-10 sm:mt-0">
+              <h2 className="text-3xl lg:text-7xl font-black uppercase tracking-tighter mb-4">Event <span className="text-[#218c63]">Timeline</span></h2>
+              <div className="h-1.5 w-16 sm:w-24 mx-auto bg-[#218c63] rounded-full shadow-[0_0_15px_#218c63]" />
             </div>
           </FadeIn>
 
@@ -195,22 +185,22 @@ export default function Home() {
         </div>
       </section >
 
-      <section id="partners" className="relative z-20 py-48 px-6 border-t border-white/5 bg-black/40">
-        <div className="max-w-7xl mx-auto">
+      <section id="partners" className="relative z-40 min-h-screen w-full flex flex-col justify-center py-24 sm:py-48 px-4 sm:px-6 bg-[#050906]/40 backdrop-blur-xl border-t border-[#218c63]/10 snap-start snap-always shrink-0">
+        <div className="max-w-7xl mx-auto w-full">
           <FadeIn>
-            <div className="text-center mb-32">
-              <p className="text-[#218c63] font-black tracking-[0.6em] uppercase text-xs mb-6">Support the Protocol</p>
-              <h2 className="text-6xl md:text-9xl font-black uppercase tracking-tighter mb-8">
-                Mission <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#218c63] via-emerald-400 to-[#218c63]">Partners</span>
+            <div className="text-center mb-16 sm:mb-32">
+              <p className="text-[#218c63] font-black tracking-[0.4em] sm:tracking-[0.6em] uppercase text-[10px] sm:text-xs mb-4 sm:mb-6">Support the Protocol</p>
+              <h2 className="text-3xl sm:text-6xl md:text-9xl font-black uppercase tracking-tighter mb-6 sm:mb-8">
+                Mission <br className="block sm:hidden" /><span className="text-transparent bg-clip-text bg-gradient-to-r from-[#218c63] via-emerald-400 to-[#218c63]">Partners</span>
               </h2>
-              <p className="text-gray-400 font-medium max-w-2xl mx-auto text-lg leading-relaxed">
+              <p className="text-gray-400 font-medium max-w-2xl mx-auto text-sm sm:text-lg leading-relaxed px-2">
                 Empowering the next generation of cybersecurity talent through strategic industry collaboration.
               </p>
             </div>
           </FadeIn>
 
           {/* PARTNER PLACEHOLDERS → Coming Soon */}
-          <div className="space-y-16">
+          <div className="space-y-10 sm:space-y-16">
             <div className="flex items-center gap-6">
               <div className="h-px flex-1 bg-gradient-to-r from-transparent via-[#218c63]/30 to-transparent" />
               <p className="text-[10px] font-black uppercase tracking-[0.5em] text-gray-500 whitespace-nowrap">Strategic Partners</p>
@@ -225,18 +215,18 @@ export default function Home() {
             </div>
           </div>
 
-          <FadeIn delay={0.4}>
-            <div className="mt-16 relative group overflow-hidden rounded-[3rem] p-px bg-gradient-to-r from-transparent via-[#218c63]/20 to-transparent">
-              <div className="bg-[#050906]/80 backdrop-blur-3xl rounded-[3rem] p-12 md:p-20 text-center border border-white/5 relative z-10">
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-16 bg-gradient-to-b from-[#218c63] to-transparent opacity-50" />
-                <h3 className="text-4xl md:text-5xl font-black uppercase tracking-tighter mb-6 leading-none">Become a <br /> <span className="text-[#218c63]">Mission Partner</span></h3>
-                <p className="text-gray-400 font-medium max-w-xl mx-auto mb-10 text-lg">
+          <FadeIn delay={0.2}>
+            <div className="mt-12 sm:mt-16 relative group overflow-hidden rounded-[2rem] sm:rounded-[3rem] p-px bg-gradient-to-r from-transparent via-[#218c63]/20 to-transparent">
+              <div className="bg-[#050906]/80 backdrop-blur-3xl rounded-[2rem] sm:rounded-[3rem] p-8 md:p-20 text-center border border-white/5 relative z-10">
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-10 sm:h-16 bg-gradient-to-b from-[#218c63] to-transparent opacity-50" />
+                <h3 className="text-2xl sm:text-4xl md:text-5xl font-black uppercase tracking-tighter mb-4 sm:mb-6 leading-none">Become a <br /> <span className="text-[#218c63]">Mission Partner</span></h3>
+                <p className="text-gray-400 font-medium max-w-xl mx-auto mb-8 sm:mb-10 text-sm sm:text-lg px-2">
                   Showcase your brand at KIET's premier cybersecurity event and connect with top student talent across India.
                 </p>
-                <div className="flex flex-col sm:flex-row justify-center items-center gap-6">
+                <div className="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-6">
                   <Link
                     href="mailto:partners@mythxctf.com"
-                    className="bg-[#218c63] hover:bg-[#1a6e4d] text-white font-black px-12 py-5 rounded-2xl text-base transition-all hover:scale-105 shadow-[0_0_40px_rgba(33,140,99,0.4)] uppercase tracking-widest w-full sm:w-auto"
+                    className="bg-[#218c63] hover:bg-[#1a6e4d] text-white font-black px-10 py-4 sm:px-12 sm:py-5 rounded-2xl text-sm sm:text-base transition-all hover:scale-105 shadow-[0_0_40px_rgba(33,140,99,0.4)] uppercase tracking-widest w-full sm:w-auto"
                   >
                     Partner with Us
                   </Link>
@@ -249,24 +239,24 @@ export default function Home() {
       </section>
 
       {/* FINAL CTA */}
-      <section className="relative z-20 py-24 px-6 border-t border-white/5 overflow-hidden">
+      <section className="relative z-50 min-h-screen w-full flex flex-col justify-center items-center py-24 px-4 sm:px-6 bg-transparent border-t border-[#218c63]/10 overflow-hidden snap-start snap-always shrink-0">
         <div className="absolute inset-0 bg-gradient-to-t from-[#218c63]/10 to-transparent pointer-events-none" />
         <div className="max-w-4xl mx-auto text-center relative z-20">
           <FadeIn>
-            <h2 className="text-4xl md:text-8xl font-black uppercase tracking-tighter mb-12 flex flex-col items-center">
+            <h2 className="text-4xl sm:text-5xl md:text-8xl font-black uppercase tracking-tighter mb-8 sm:mb-12 flex flex-col items-center">
               <span>Join the</span>
               <span className="text-[#218c63]">Endgame Protocol</span>
             </h2>
             <Link
               href="/register"
-              className="inline-block bg-[#218c63] hover:bg-[#1a6e4d] text-white font-black py-8 px-20 rounded-[2.5rem] text-3xl tracking-tighter uppercase transition-all duration-500 hover:scale-[1.05] shadow-[0_0_80px_rgba(33,140,99,0.5)] active:scale-95 border-b-[8px] border-[#114b33]"
+              className="inline-block bg-[#218c63] hover:bg-[#1a6e4d] text-white font-black py-6 px-12 sm:py-8 sm:px-20 rounded-[2rem] sm:rounded-[2.5rem] text-xl sm:text-3xl tracking-tighter uppercase transition-all duration-500 hover:scale-[1.05] shadow-[0_0_80px_rgba(33,140,99,0.5)] active:scale-95 border-b-[6px] sm:border-b-[8px] border-[#114b33]"
             >
               Join Battle
             </Link>
           </FadeIn>
         </div>
       </section>
-    </main >
+    </main>
   )
 }
 
@@ -277,27 +267,21 @@ function TimelineNode({ side, date, title, desc, icon, status = "pending" }: any
       <div className={`relative flex flex-col ${isLeft ? "lg:flex-row" : "lg:flex-row-reverse"} items-center justify-center lg:mb-24 px-4 sm:px-0`}>
         {/* Content Card */}
         <div className={`w-full lg:w-[45%] ${isLeft ? "lg:text-right lg:pr-20" : "lg:text-left lg:pl-20"}`}>
-          <div className={`group p-8 md:p-12 rounded-[3rem] bg-white/[0.02] backdrop-blur-3xl border transition-all duration-700 relative overflow-hidden ${status === "active" ? "border-[#218c63]/40 shadow-[0_0_50px_rgba(33,140,99,0.15)]" : "border-white/5 hover:border-[#218c63]/30 hover:bg-white/[0.04]"}`}>
-            {/* Glowing Accent */}
-            <div className={`absolute -top-10 -right-10 w-32 h-32 blur-[40px] rounded-full transition-opacity duration-700 ${status === "active" ? "bg-[#218c63]/20 opacity-100" : "bg-[#218c63]/10 opacity-0 group-hover:opacity-100"}`} />
+          <div className={`group p-8 md:p-12 rounded-[3rem] border transition-all duration-300 relative overflow-hidden backdrop-blur-md hover:backdrop-blur-2xl ${status === "active" ? "bg-white/[0.05] border-[#218c63]/50 shadow-[0_0_40px_rgba(33,140,99,0.15)]" : "bg-white/[0.02] border-white/5 hover:border-[#218c63]/30 hover:bg-white/[0.08]"}`}>
+            {/* Optimized top accent - simpler radial gradient instead of huge gaussian blur calculation */}
+            <div className={`absolute top-0 right-0 w-32 h-32 bg-[radial-gradient(circle_at_top_right,rgba(33,140,99,0.15),transparent_70%)] transition-opacity duration-300 ${status === "active" ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`} />
 
             <span className={`text-[11px] font-black tracking-[0.6em] uppercase mb-6 block ${status === "active" ? "text-[#00ff9d]" : "text-gray-500"}`}>{date}</span>
-            <h4 className="text-2xl md:text-3xl font-black text-white uppercase tracking-tighter mb-4 group-hover:text-[#00ff9d] transition-colors duration-500">{title}</h4>
-            <p className="text-sm md:text-base text-gray-500 group-hover:text-gray-300 transition-colors duration-500 font-medium leading-relaxed">{desc}</p>
+            <h4 className="text-2xl md:text-3xl font-black text-white uppercase tracking-tighter mb-4 group-hover:text-[#00ff9d] transition-colors duration-300">{title}</h4>
+            <p className="text-sm md:text-base text-gray-500 group-hover:text-gray-300 transition-colors duration-300 font-medium leading-relaxed">{desc}</p>
           </div>
         </div>
 
-        {/* Central Indicator */}
-        <div className="hidden lg:flex absolute left-1/2 -translate-x-1/2 w-20 h-20 rounded-[2.5rem] bg-[#050906] border-2 border-white/5 items-center justify-center z-10 transition-all duration-700 group-hover:border-[#218c63]/50 group-hover:scale-110 shadow-2xl">
-          <div className={`transition-all duration-700 group-hover:rotate-[360deg] ${status === "active" ? "text-[#00ff9d] drop-shadow-[0_0_10px_rgba(0,255,157,0.5)]" : "text-gray-700 group-hover:text-[#218c63]"}`}>
+        {/* Central Indicator - Removed nested pulse/spin animations which stack heavily on GPU */}
+        <div className={`hidden lg:flex absolute left-1/2 -translate-x-1/2 w-16 h-16 rounded-[2rem] bg-[#050906] border-2 items-center justify-center z-10 transition-all duration-300 group-hover:scale-110 ${status === "active" ? "border-[#218c63]/80 shadow-[0_0_20px_rgba(33,140,99,0.3)]" : "border-white/10 group-hover:border-[#218c63]/50"}`}>
+          <div className={`transition-colors duration-300 ${status === "active" ? "text-[#00ff9d]" : "text-gray-600 group-hover:text-[#218c63]"}`}>
             {icon}
           </div>
-          {status === "active" && (
-            <>
-              <div className="absolute inset-0 rounded-[2.5rem] bg-[#218c63]/10 animate-pulse" />
-              <div className="absolute -inset-2 rounded-[3rem] border border-[#218c63]/20 animate-spin-slow pointer-events-none" />
-            </>
-          )}
         </div>
 
         <div className="hidden lg:block w-[45%]" />
@@ -309,12 +293,11 @@ function TimelineNode({ side, date, title, desc, icon, status = "pending" }: any
 
 function PartnerCard({ size }: { size: "large" | "small" }) {
   return (
-    <div className={`w-full ${size === "large" ? "aspect-[2/1] min-h-[250px]" : "aspect-[2/1] min-h-[180px]"} rounded-[2.5rem] bg-white/[0.03] border-2 border-white/5 backdrop-blur-xl flex items-center justify-center p-12 grayscale hover:grayscale-0 hover:border-[#218c63]/60 hover:bg-[#218c63]/5 transition-all duration-700 group relative overflow-hidden shadow-2xl`}>
-      <div className="absolute inset-0 bg-gradient-to-br from-[#218c63]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-      <div className={`font-black text-gray-700 group-hover:text-white transition-all uppercase tracking-[0.5em] text-center italic drop-shadow-[0_0_10px_rgba(33,140,99,0.2)] ${size === "large" ? "text-3xl" : "text-xl"}`}>
+    <div className={`w-full ${size === "large" ? "aspect-[2/1] min-h-[200px]" : "aspect-[2/1] min-h-[140px]"} rounded-[2.5rem] bg-black/40 border-2 border-white/5 flex items-center justify-center p-8 grayscale hover:grayscale-0 hover:border-[#218c63]/40 hover:bg-[#218c63]/5 transition-all duration-300 group relative overflow-hidden`}>
+      <div className="absolute inset-0 bg-gradient-to-br from-[#218c63]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      <div className={`font-black text-gray-700 group-hover:text-white transition-all uppercase tracking-[0.5em] text-center italic ${size === "large" ? "text-2xl" : "text-lg"}`}>
         Partner Logo
       </div>
-      <div className="absolute -bottom-5 -right-5 w-20 h-20 bg-[#218c63]/20 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
     </div>
   )
 }

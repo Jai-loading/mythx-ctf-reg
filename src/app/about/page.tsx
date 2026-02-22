@@ -7,7 +7,7 @@ import { Shield, Target, Zap, Users } from "lucide-react"
 
 const AnimatedBackground = dynamic(() => import("@/components/animted-bg"), {
     ssr: false,
-    loading: () => <div className="fixed inset-0 bg-black bg-gradient-to-br from-black to-purple-950" />,
+    loading: () => <div className="fixed inset-0 bg-[#050906]" />,
 })
 
 export default function About() {
@@ -47,8 +47,8 @@ export default function About() {
                     />
                     <InfoCard
                         icon={<Users className="w-10 h-10 text-emerald-400" />}
-                        title="By Technocrats"
-                        content="Organized by Technocrats, the premier technical club of KIET Deemed to be University, with a legacy of building production-grade solutions and hosting elite-level competitions."
+                        title="By MythX Community"
+                        content="Organized by the MythX Community, with a legacy of building production-grade solutions and hosting elite-level competitions."
                     />
                 </div>
 

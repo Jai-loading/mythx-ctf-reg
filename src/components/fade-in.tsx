@@ -22,79 +22,42 @@ export default function FadeIn({
   className = "",
   threshold = 0.1,
 }: FadeInProps) {
-  const [isVisible, setIsVisible] = useState(false)
-  const ref = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true)
-          observer.unobserve(entry.target)
-        }
-      },
-      {
-        threshold,
-      },
-    )
-
-    const currentRef = ref.current
-    if (currentRef) {
-      observer.observe(currentRef)
-    }
-
-    return () => {
-      if (currentRef) {
-        observer.unobserve(currentRef)
-      }
-    }
-  }, [threshold])
 
   const getInitialProps = () => {
     switch (direction) {
-      case "up":
-        return { opacity: 0, y: 40 }
-      case "down":
-        return { opacity: 0, y: -40 }
-      case "left":
-        return { opacity: 0, x: 40 }
-      case "right":
-        return { opacity: 0, x: -40 }
-      case "none":
-        return { opacity: 0 }
-      default:
-        return { opacity: 0, y: 40 }
+      case "up": return { opacity: 0, y: 80 }
+      case "down": return { opacity: 0, y: -80 }
+      case "left": return { opacity: 0, x: 80 }
+      case "right": return { opacity: 0, x: -80 }
+      case "none": return { opacity: 0 }
+      default: return { opacity: 0, y: 80 }
     }
   }
 
   const getAnimateProps = () => {
     switch (direction) {
       case "up":
-      case "down":
-        return { opacity: 1, y: 0 }
+      case "down": return { opacity: 1, y: 0 }
       case "left":
-      case "right":
-        return { opacity: 1, x: 0 }
-      case "none":
-        return { opacity: 1 }
-      default:
-        return { opacity: 1, y: 0 }
+      case "right": return { opacity: 1, x: 0 }
+      case "none": return { opacity: 1 }
+      default: return { opacity: 1, y: 0 }
     }
   }
 
   return (
-    <div ref={ref} className={className}>
-      <motion.div
-        initial={getInitialProps()}
-        animate={isVisible ? getAnimateProps() : getInitialProps()}
-        transition={{
-          duration,
-          delay,
-          ease: "easeOut",
-        }}
-      >
-        {children}
-      </motion.div>
-    </div>
+    <motion.div
+      className={className}
+      initial={getInitialProps()}
+      whileInView={getAnimateProps()}
+      viewport={{ once: true, margin: "-10%" }}
+      transition={{
+        duration,
+        delay,
+        ease: [0.25, 0.1, 0.25, 1],
+      }}
+    >
+      {children}
+    </motion.div>
   )
 }

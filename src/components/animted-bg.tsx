@@ -10,6 +10,7 @@ export default function AnimatedBackground() {
 
     const ctx = canvas.getContext("2d")
     if (!ctx) return
+    let animationFrameId: number;
 
     const setCanvasDimensions = () => {
       canvas.width = window.innerWidth
@@ -26,74 +27,73 @@ export default function AnimatedBackground() {
       "#82a18a",
     ]
 
-   class Particle {
-  x: number
-  y: number
-  size: number
-  speedX: number
-  speedY: number
-  color: string
-  canvas: HTMLCanvasElement
-  ctx: CanvasRenderingContext2D
+    class Particle {
+      x: number
+      y: number
+      size: number
+      speedX: number
+      speedY: number
+      color: string
+      canvas: HTMLCanvasElement
+      ctx: CanvasRenderingContext2D
 
-  constructor(
-    canvas: HTMLCanvasElement,
-    ctx: CanvasRenderingContext2D,
-    themeColors: string[]
-  ) {
-    this.canvas = canvas
-    this.ctx = ctx
+      constructor(
+        canvas: HTMLCanvasElement,
+        ctx: CanvasRenderingContext2D,
+        themeColors: string[]
+      ) {
+        this.canvas = canvas
+        this.ctx = ctx
 
-    this.x = Math.random() * this.canvas.width
-    this.y = Math.random() * this.canvas.height
-    this.size = Math.random() * 2 + 1.5
-    this.speedX = Math.random() * 0.4 - 0.2
-    this.speedY = Math.random() * 0.4 - 0.2
-    this.color =
-      themeColors[Math.floor(Math.random() * themeColors.length)]
-  }
+        this.x = Math.random() * this.canvas.width
+        this.y = Math.random() * this.canvas.height
+        this.size = Math.random() * 2 + 1.5
+        this.speedX = Math.random() * 0.4 - 0.2
+        this.speedY = Math.random() * 0.4 - 0.2
+        this.color =
+          themeColors[Math.floor(Math.random() * themeColors.length)]
+      }
 
-  update() {
-    this.x += this.speedX
-    this.y += this.speedY
+      update() {
+        this.x += this.speedX
+        this.y += this.speedY
 
-    if (this.x > this.canvas.width) this.x = 0
-    if (this.x < 0) this.x = this.canvas.width
-    if (this.y > this.canvas.height) this.y = 0
-    if (this.y < 0) this.y = this.canvas.height
-  }
+        if (this.x > this.canvas.width) this.x = 0
+        if (this.x < 0) this.x = this.canvas.width
+        if (this.y > this.canvas.height) this.y = 0
+        if (this.y < 0) this.y = this.canvas.height
+      }
 
-  draw() {
-    this.ctx.fillStyle = this.color
-    this.ctx.shadowColor = this.color
-    this.ctx.shadowBlur = 8
+      draw() {
+        this.ctx.fillStyle = this.color
 
-    this.ctx.beginPath()
-    this.ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2)
-    this.ctx.fill()
-
-    this.ctx.shadowBlur = 0
-  }
-}
+        this.ctx.beginPath()
+        this.ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2)
+        this.ctx.fill()
+      }
+    }
 
 
     const particlesArray: Particle[] = []
     const numberOfParticles = Math.min(
-      120,
-      Math.floor((canvas.width * canvas.height) / 12000)
+      80, // Lower max particle count to prevent dense-screen lag
+      Math.floor((canvas.width * canvas.height) / 16000)
     )
 
     for (let i = 0; i < numberOfParticles; i++) {
-  particlesArray.push(new Particle(canvas, ctx, themeColors))
-}
+      particlesArray.push(new Particle(canvas, ctx, themeColors))
+    }
 
     const connectParticles = () => {
-      const maxDistance = 160
+      const maxDistance = 140
 
       for (let a = 0; a < particlesArray.length; a++) {
-        for (let b = a; b < particlesArray.length; b++) {
+        for (let b = a + 1; b < particlesArray.length; b++) {
           const dx = particlesArray[a].x - particlesArray[b].x
           const dy = particlesArray[a].y - particlesArray[b].y
+
+          if (Math.abs(dx) > maxDistance || Math.abs(dy) > maxDistance) continue;
+
           const distance = Math.sqrt(dx * dx + dy * dy)
 
           if (distance < maxDistance) {
@@ -112,18 +112,8 @@ export default function AnimatedBackground() {
     }
 
     const animate = () => {
-      // Dark gradient background
-      const gradient = ctx.createLinearGradient(
-        0,
-        0,
-        canvas.width,
-        canvas.height
-      )
-      gradient.addColorStop(0, "#050906")
-      gradient.addColorStop(1, "#0e2b1d")
-
-      ctx.fillStyle = gradient
-      ctx.fillRect(0, 0, canvas.width, canvas.height)
+      // Hardware accelerated clear instead of painting a new linear gradient per frame
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
 
       particlesArray.forEach((particle) => {
         particle.update()
@@ -131,21 +121,21 @@ export default function AnimatedBackground() {
       })
 
       connectParticles()
-
-      requestAnimationFrame(animate)
+      animationFrameId = requestAnimationFrame(animate)
     }
 
     animate()
 
     return () => {
       window.removeEventListener("resize", setCanvasDimensions)
+      cancelAnimationFrame(animationFrameId)
     }
   }, [])
 
   return (
     <canvas
       ref={canvasRef}
-      className="fixed top-0 left-0 w-full h-full -z-10"
+      className="fixed top-0 left-0 w-full h-full -z-10 bg-gradient-to-br from-[#050906] to-[#0e2b1d]"
       aria-hidden="true"
     />
   )

@@ -71,7 +71,7 @@ export default function Navbar() {
 
         {/* MOBILE TOGGLE */}
         <button
-          className="md:hidden text-white p-2.5 hover:bg-white/5 rounded-xl transition-all active:scale-90"
+          className="md:hidden text-white p-2.5 rounded-xl bg-white/5 border border-white/10 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.1)] transition-all active:scale-90"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           aria-label="Toggle mobile menu"
         >
@@ -81,11 +81,12 @@ export default function Navbar() {
 
       {/* MOBILE MENU */}
       <div className={cn(
-        "fixed inset-0 top-0 bg-black/98 backdrop-blur-[100px] z-[55] md:hidden transition-all duration-700 flex flex-col p-8 pt-32 gap-10 items-center justify-center",
-        isMobileMenuOpen ? "translate-x-0 opacity-100" : "translate-x-full opacity-0 pointer-events-none"
+        "fixed inset-0 top-0 bg-[#050906]/95 backdrop-blur-3xl z-[55] md:hidden transition-transform duration-500 ease-in-out flex flex-col p-8 pt-32 gap-8 items-center justify-start overflow-hidden",
+        isMobileMenuOpen ? "translate-y-0" : "-translate-y-full"
       )}>
-        <div className="absolute top-8 left-1/2 -translate-x-1/2 opacity-10">
-          <Shield className="w-24 h-24 text-[#218c63]" />
+        <div className="absolute -top-20 -right-20 w-64 h-64 bg-[#218c63]/10 rounded-full blur-[80px] pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.03] pointer-events-none w-[350px] h-[350px]">
+          <Image src={logo} alt="MythX Overlay" fill className="object-contain" />
         </div>
 
         <MobileNavLink href="/" active={pathname === "/"} onClick={() => setIsMobileMenuOpen(false)}>Home</MobileNavLink>
@@ -97,9 +98,10 @@ export default function Navbar() {
         <Link
           href="/register"
           onClick={() => setIsMobileMenuOpen(false)}
-          className="bg-[#218c63] text-white px-10 py-4 rounded-2xl text-xl font-black w-full max-w-xs text-center shadow-[0_0_40px_rgba(33,140,99,0.4)] uppercase tracking-widest mt-2"
+          className="relative group border border-[#218c63]/50 text-white px-10 py-5 rounded-2xl text-xl font-black w-full max-w-xs text-center uppercase tracking-widest mt-6 overflow-hidden active:scale-95 transition-transform"
         >
-          Register Now
+          <div className="absolute inset-0 bg-gradient-to-r from-[#218c63] to-[#1a6e4d] opacity-90" />
+          <span className="relative z-10 flex items-center justify-center gap-2 tracking-widest shadow-black">Register Now</span>
         </Link>
       </div>
     </nav>

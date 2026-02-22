@@ -5,8 +5,7 @@ import FadeIn from "@/components/fade-in"
 import { AlertTriangle, Terminal, Code, Lock, ShieldAlert, Scale, Handshake } from "lucide-react"
 
 const AnimatedBackground = dynamic(() => import("@/components/animted-bg"), {
-    ssr: false,
-    loading: () => <div className="fixed inset-0 bg-black bg-gradient-to-br from-black to-purple-950" />,
+    loading: () => <div className="fixed inset-0 bg-[#050906]" />,
 })
 
 export default function Rules() {
@@ -60,7 +59,7 @@ export default function Rules() {
                         </div>
                         <p className="text-red-500 font-black uppercase tracking-[0.5em] text-xs mb-4">Zero Tolerance Warning</p>
                         <p className="text-gray-300 font-medium text-lg leading-relaxed">
-                            Any breach of these protocols results in permanent disqualification, erasure from the global leaderboard, and blacklisting from all future Technocrats operations.
+                            Any breach of these protocols results in permanent disqualification, erasure from the global leaderboard, and blacklisting from all future MythX Community operations.
                         </p>
                     </div>
                 </FadeIn>

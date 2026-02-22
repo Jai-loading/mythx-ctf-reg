@@ -9,10 +9,10 @@ import { cn } from "@/lib/utils"
 
 export default function Footer() {
   return (
-    <footer className="relative w-full bg-black border-t border-white/5 text-white overflow-hidden py-24 pb-12">
+    <footer className="relative w-full bg-[#030604] border-t border-white/5 text-white overflow-hidden py-24 pb-12 snap-end shrink-0">
       {/* BACKGROUND DECOR */}
       <div
-        className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#218c63]/5 rounded-full blur-[120px] pointer-events-none"
+        className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-[#218c63]/5 rounded-full blur-[120px] pointer-events-none"
       />
 
       <div className="max-w-7xl mx-auto px-6 relative z-10">
@@ -73,21 +73,20 @@ export default function Footer() {
               <p className="text-sm text-gray-500 mb-8 leading-relaxed font-bold">
                 Connect with likeminded people to create, compete, and collaborate.
               </p>
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+              <div className="flex flex-col gap-4 mt-6 w-full">
                 <Link
                   href="https://discord.gg/EXq267jVA"
                   target="_blank"
-                  className="inline-flex items-center gap-2 text-[#218c63] font-black text-sm hover:translate-x-1 transition-transform uppercase tracking-widest"
+                  className="flex items-center justify-center gap-2 bg-[#218c63]/10 border border-[#218c63]/25 hover:bg-[#218c63] hover:border-[#218c63] text-white font-black text-xs sm:text-sm px-4 sm:px-6 py-4 rounded-xl transition-all uppercase tracking-widest text-center"
                 >
-                  Join Discord <ExternalLink className="w-4 h-4" />
+                  Discord <ExternalLink className="w-4 h-4 ml-1" />
                 </Link>
-                <div className="hidden sm:block w-1.5 h-1.5 rounded-full bg-white/20" />
                 <Link
                   href="https://chat.whatsapp.com/YOUR_WHATSAPP_GROUP_LINK"
                   target="_blank"
-                  className="inline-flex items-center gap-2 text-[#218c63] font-black text-sm hover:translate-x-1 transition-transform uppercase tracking-widest"
+                  className="flex items-center justify-center gap-2 bg-[#218c63]/10 border border-[#218c63]/25 hover:bg-[#218c63] hover:border-[#218c63] text-white font-black text-xs sm:text-sm px-4 sm:px-6 py-4 rounded-xl transition-all uppercase tracking-widest text-center"
                 >
-                  Join WhatsApp <ExternalLink className="w-4 h-4" />
+                  WhatsApp <ExternalLink className="w-4 h-4 ml-1" />
                 </Link>
               </div>
             </div>
@@ -98,7 +97,7 @@ export default function Footer() {
         {/* BOTTOM STRIP */}
         <div className="pt-12 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left">
           <p className="text-gray-600 text-[10px] font-black uppercase tracking-[0.4em]">
-            © 2026 Technocrats, KIET. All rights reserved.
+            © 2026 MythX. All rights reserved.
           </p>
         </div>
 

@@ -13,7 +13,7 @@ import { Shield, Users, Terminal, Radio, Target, CheckCircle2 } from "lucide-rea
 
 const AnimatedBackground = dynamic(() => import("@/components/animted-bg"), {
   ssr: false,
-  loading: () => <div className="fixed inset-0 bg-black bg-gradient-to-br from-black to-[#050906]" />,
+  loading: () => <div className="fixed inset-0 bg-[#050906]" />,
 })
 
 const initialFormData = {
@@ -90,7 +90,7 @@ export default function Register() {
 
   return (
     <main className="poppins relative min-h-screen text-white bg-[#050906] overflow-hidden pt-44 pb-24">
-      <ToastContainer position="bottom-left" theme="dark" />
+      <ToastContainer position="bottom-left" theme="dark" toastClassName="bg-[#050906]/80 backdrop-blur-xl border border-[#218c63]/30 text-white font-poppins text-sm rounded-2xl shadow-[0_0_30px_rgba(33,140,99,0.2)]" />
 
       <div className="fixed inset-0 z-10 pointer-events-none">
         <AnimatedBackground />
