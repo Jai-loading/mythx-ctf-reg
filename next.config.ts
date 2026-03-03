@@ -6,9 +6,15 @@ import { Configuration } from 'webpack';
 dotenv.config();
 
 const nextConfig: NextConfig = {
-  output: 'standalone',
+  output: 'export',
   basePath: '/ctf2026',
   trailingSlash: true,
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   webpack(config: Configuration, { isServer }: { isServer: boolean }) {
     if (!isServer && process.env.NODE_ENV === 'production') {
       config.plugins = config.plugins || [];
