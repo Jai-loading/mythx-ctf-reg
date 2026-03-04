@@ -18,6 +18,10 @@ export const metadata: Metadata = {
   title: "MythX presents An Endgame Protocol : CTF",
   description: "A community platform for likeminded people to create, compete, and collaborate through cybersecurity challenges.",
   robots: "index, follow",
+  icons: {
+    icon: "/ctf2026/_next/static/media/mythx_logo_no_bg.0cd3ad71.png",
+    apple: "/ctf2026/_next/static/media/mythx_logo_no_bg.0cd3ad71.png",
+  }
 };
 
 export const viewport: Viewport = {
