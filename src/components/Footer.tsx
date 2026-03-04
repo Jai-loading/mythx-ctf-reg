@@ -4,7 +4,7 @@ import * as React from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { Instagram, Linkedin, Twitter, Shield, ExternalLink, Globe } from "lucide-react"
-import logo from "@/images/mythx_logo_no_bg.png"
+import logo from "@/images/mythx_logo_no_bg.webp"
 import { cn } from "@/lib/utils"
 
 export default function Footer() {

@@ -8,7 +8,7 @@ import Link from "next/link"
 import FadeIn from "@/components/fade-in"
 import design1 from "@/images/Group 4609.png"
 import design2 from "@/images/Group 4610.png"
-import logo from "@/images/mythx_logo_no_bg.png"
+import logo from "@/images/mythx_logo_no_bg.webp"
 import { Shield, Target, Zap, Trophy, Users, Globe, Calendar, CheckCircle2, ChevronRight } from "lucide-react"
 
 const AnimatedBackground = dynamic(() => import("@/components/animted-bg"), {
