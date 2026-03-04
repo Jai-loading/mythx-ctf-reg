@@ -37,6 +37,15 @@ export default function Register() {
   const router = useRouter();
   const [ripples, setRipples] = useState<Array<{ x: number; y: number; id: number }>>([]);
 
+  const toggleCollege = (option: "kiet" | "other") => {
+    setCollegeOption(option);
+    if (option === "other") {
+      setFormData(prev => ({ ...prev, college: "" }));
+    } else {
+      setFormData(prev => ({ ...prev, college: "KIET Group of Institutions" }));
+    }
+  };
+
   const addRipple = (e: React.MouseEvent<HTMLButtonElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const id = Date.now();
@@ -80,7 +89,7 @@ export default function Register() {
     try {
       await axios.post("/api/register", formData);
       toast.success("Registration successful! Prepare for battle.");
-      setTimeout(() => router.push("/"), 2500);
+      setTimeout(() => router.push("/information/"), 2500);
     } catch (error: any) {
       toast.error(error?.response?.data?.message || "Registration failed");
     } finally {
@@ -155,14 +164,14 @@ export default function Register() {
                   <div className="grid grid-cols-2 gap-3 p-1.5 bg-white/5 rounded-xl border border-white/10">
                     <button
                       type="button"
-                      onClick={() => setCollegeOption("kiet")}
+                      onClick={() => toggleCollege("kiet")}
                       className={`py-3 rounded-lg text-xs font-black tracking-widest transition-all ${collegeOption === "kiet" ? "bg-[#218c63] text-white shadow-[0_0_15px_rgba(33,140,99,0.5)]" : "text-gray-400 hover:text-white"}`}
                     >
                       KIET
                     </button>
                     <button
                       type="button"
-                      onClick={() => setCollegeOption("other")}
+                      onClick={() => toggleCollege("other")}
                       className={`py-3 rounded-lg text-xs font-black tracking-widest transition-all ${collegeOption === "other" ? "bg-[#218c63] text-white shadow-[0_0_15px_rgba(33,140,99,0.5)]" : "text-gray-400 hover:text-white"}`}
                     >
                       OTHER

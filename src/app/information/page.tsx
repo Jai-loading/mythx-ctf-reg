@@ -31,7 +31,7 @@ export default function InfoPage() {
     const getRegistrations = async () => {
         try {
             setError(null)
-            const response = await axios.get<RegistrationStats>("/api/register")
+            const response = await axios.get<RegistrationStats>("/ctf2026/stats.json")
             setStats(response.data)
         } catch (err: any) {
             setError("Could not load stats. Please try again.")
@@ -55,10 +55,6 @@ export default function InfoPage() {
             <div className="relative z-20 max-w-5xl w-full">
                 <FadeIn>
                     <div className="text-center mb-24">
-                        <div className="flex items-center justify-center gap-4 text-[#218c63] mb-6">
-                            <BarChart3 className="w-10 h-10" />
-                            <span className="text-xs font-black uppercase tracking-[0.5em]">Live Feed Active</span>
-                        </div>
                         <h1 className="text-6xl md:text-8xl font-black text-white uppercase tracking-tighter mb-4">
                             Registration <span className="text-[#218c63]">Stats</span>
                         </h1>
@@ -122,11 +118,30 @@ function StatCard({ title, value, description, icon, color }: { title: string; v
                 <div className={`${color} opacity-40 group-hover:opacity-100 transition-opacity duration-700`}>{icon}</div>
             </div>
             <div className={`text-7xl font-black tracking-tighter mb-4 ${color}`}>
-                {value}
+                <AnimatedCounter value={value} />
             </div>
             <p className="text-gray-500 font-bold text-xs uppercase tracking-tight">
                 {description}
             </p>
         </div>
     )
+}
+
+function AnimatedCounter({ value, duration = 2000 }: { value: number; duration?: number }) {
+    const [count, setCount] = useState(0)
+
+    useEffect(() => {
+        let startTimestamp: number | null = null
+        const step = (timestamp: number) => {
+            if (!startTimestamp) startTimestamp = timestamp
+            const progress = Math.min((timestamp - startTimestamp) / duration, 1)
+            setCount(Math.floor(progress * value))
+            if (progress < 1) {
+                window.requestAnimationFrame(step)
+            }
+        }
+        window.requestAnimationFrame(step)
+    }, [value, duration])
+
+    return <>{count.toLocaleString()}</>
 }
